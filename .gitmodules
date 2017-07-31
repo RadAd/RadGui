@@ -1,0 +1,3 @@
+[submodule "RadWin32"]
+	path = RadWin32
+	url = https://github.com/RadAd/RadWin32.git
