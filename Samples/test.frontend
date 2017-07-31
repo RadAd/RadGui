@@ -1,0 +1,3 @@
+<form>
+  <control type="selectdir" caption="Project:" filter="*.sln"/>
+</form>

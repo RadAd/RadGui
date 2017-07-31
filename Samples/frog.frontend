@@ -1,0 +1,30 @@
+<form caption="FroG the Frontend Generator" program="frog.exe" showconsole="false" width="403" url="http://frog.objective-view.de/" description="FroG is a tool to create graphical user interfaces for command line tools very fast and easy and nonetheless pretty sophisiticated." author="2006 Daniel Groß">
+  <control type="image" filename2="help/frog_badge.png" filename="frog_badge.bmp"/>
+  <control type="radiogroup" caption=" Actions ">
+    <item caption="Register *.frontend filetype to FroG" commandline="-Register_Filetype"/>
+    <item caption="Unregister *.frontend filetype from FroG" commandline="-UnRegister_Filetype"/>
+    <item caption="Create Shortcut from *.frontend on Desktop" commandline="-Create_Shortcut @dropfiles" selected="true"/>
+  </control>
+  <control type="groupbox" caption=" How to start ">
+    <control type="spacer" height="-8"/>
+    <control type="text" caption="Drag *.frontend file from the Explorer to this window. The label besides the
+icon on the lower end will tell you how many files you droped.
+Press [Execute] or 'Enter' to create shortcuts on the desktop."/>
+    <control type="spacer" height="-8"/>
+    <control type="text" caption="Another way is to select 'Register *.frontend filetype to FroG' above,
+press [Execute], then start a frontend by clicking on the *.frontend file"/>
+    <control type="spacer" height="-8"/>
+    <control type="text" caption="Then you might like to create your own *.frontend. Start be looking at the
+*.frontend-files with your text- or xml-editor. To get to know all the tags
+and attributes open the dictionary.html from the help folder."/>
+  </control>
+  <control type="exitcode">
+    <item value="0" message=""/>
+    <item value="1" message="Filetype *.frontend registred to FroG."/>
+    <item value="2" message="Filetype *.frontend unregistred."/>
+    <item value="3" message="Created shortcut on the Desktop."/>
+  </control>
+  <control type="filefilter">
+    <item name="FroG files" filter="*.frontend"/>
+  </control>
+</form>

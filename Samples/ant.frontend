@@ -1,0 +1,6 @@
+<dialog caption="Ant" program="%UTILS_DIR%\Devel\apache-ant\bin\ant" width="200">
+  <horzlayout>
+		<checkbox caption="clean" commandline="clean"/>
+		<checkbox caption="build" commandline="build" checked="true"/>
+	</horzlayout>
+</dialog>

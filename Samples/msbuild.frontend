@@ -1,0 +1,21 @@
+<dialog caption="MSBuild" program="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" width="403">
+	<groupbox caption="Configuration">
+		<radio caption="Debug" commandline="/p:configuration=&#x0022;Debug&#x0022;"/>
+		<radio caption="Release" commandline="/p:configuration=&#x0022;Release&#x0022;" selected="true"/>
+	</groupbox>
+	<groupbox caption="Platform">
+		<radio caption="Win32" commandline="/p:platform=&#x0022;Win32&#x0022;"/>
+		<radio caption="Mixed Platforms" commandline="/p:platform=&#x0022;Mixed Platforms&#x0022;" selected="true"/>
+		<radio caption="x86" commandline="/p:platform=&#x0022;x86&#x0022;"/>
+		<radio caption="x64" commandline="/p:platform=&#x0022;x64&#x0022;"/>
+	</groupbox>
+	<groupbox caption="Action">
+		<radio caption="Build" commandline="/t:build"/>
+		<radio caption="Clean" commandline="/t:clean"/>
+		<radio caption="Rebuild" commandline="/t:rebuild" selected="true"/>
+	</groupbox>
+  <horzlayout>
+    <edit caption="Project:" default="D:\AXG\RMS-R\Src\OPCrew.sln"/>
+    <selectfile filter="*.sln"/>
+  </horzlayout>
+</dialog>

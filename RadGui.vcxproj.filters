@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="RadGui.cpp" />
+    <ClCompile Include="MapDialog.cpp" />
+    <ClCompile Include="ProcessXml.cpp" />
+    <ClCompile Include="ControlDef.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Com.h" />
+    <ClInclude Include="Xml.h" />
+    <ClInclude Include="MapDialog.h" />
+    <ClInclude Include="ControlDef.h" />
+    <ClInclude Include="ProcessXml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="FolderOpen.ico">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{26befec6-269f-4a03-a186-384184e388ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RadGui.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="RadGui.exe.manifest">
+      <Filter>Resources</Filter>
+    </Manifest>
+  </ItemGroup>
+</Project>

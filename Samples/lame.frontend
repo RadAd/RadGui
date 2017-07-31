@@ -1,0 +1,364 @@
+<form caption="lame ain't no mp3 encoder" program="lame\lame.exe" icon="lame\lame.icon.ico" showconsole="false" width="514" url="http://lame.sourceforge.net/" description="LAME is an LGPL MP3 encoder. The Open source development model allowed to improve its quality and speed since 1999. It is now an highly evolved MP3 encoder, with quality and speed able to rival state of the art commercial encoders." author="Latest LAME release : v3.7 ">
+    <control type="tabset">
+        <tabsheet caption="General" active="true">
+            <control type="image" filename2="lame\lame.badge.jpg" filename="lame.badge.bmp"/>
+            <control type="spacer" height="-35"/>
+            <control type="text" caption="v. 3.97 final" left="412" fontcolor="6592c8" fontsize="8"/>
+            <control type="spacer" height="8"/>
+            <control type="groupbox" caption=" Bitrate/Coding " fontstyle="bold">
+                <control type="combobox" caption="VBR-Quality (Variable Bitrate)" hint="Turn on VBR.  There are several ways you can use VBR.  I personally
+like using VBR to get files slightly bigger than 128 kbps files, where
+the extra bits are used for the occasional difficult-to-encode frame.
+For this, try specifying a minimum bitrate to use with VBR:">
+                    <item caption="No VBR" commandline=""/>
+                    <item caption="~240kB/s (extreme)" commandline="-V 0"/>
+                    <item caption="~225kB/s" commandline="-V 1"/>
+                    <item caption="~190kB/s (standard)" commandline="-V 2" selected="true"/>
+                    <item caption="~175kB/s" commandline="-V 3"/>
+                    <item caption="~165kB/s (medium)" commandline="-V 4"/>
+                    <item caption="~130kB/s" commandline="-V 5"/>
+                    <item caption="~115kB/s" commandline="-V 6"/>
+                    <item caption="~100kB/s" commandline="-V 7"/>
+                    <item caption="~85kB/s" commandline="-V 8"/>
+                    <item caption="~65kB/s" commandline="-V 9"/>
+                </control>
+                <control type="checkbox" caption="Force writing LAME Tag" commandline="-T"/>
+                <control type="spacer" height="-22"/>
+                <control type="checkbox" caption="Strictly enforce VBR minimum bitrate" commandline="-F" left="240"/>
+                <control type="combobox" caption="ABR Bitrate (Average Bitrate aka Safe VBR)" hint="Turns on encoding with a targeted average bitrate of n kbps, allowing
+to use frames of different sizes.  The allowed range of n is 8...320
+kbps, you can use any integer value within that range.">
+                    <item caption="No ABR" commandline="" selected="true"/>
+                    <item caption="8 kBit/s" commandline="--abr 8"/>
+                    <item caption="16 kBit/s" commandline="--abr 16"/>
+                    <item caption="32 kBit/s" commandline="--abr 32"/>
+                    <item caption="64 kBit/s" commandline="--abr 64"/>
+                    <item caption="96 kBit/s" commandline="--abr 96"/>
+                    <item caption="128 kBit/s" commandline="--abr 128"/>
+                    <item caption="144 kBit/s" commandline="--abr 144"/>
+                    <item caption="160 kBit/s" commandline="--abr 160"/>
+                    <item caption="192 kBit/s" commandline="--abr 192"/>
+                    <item caption="224 kBit/s" commandline="--abr 224"/>
+                    <item caption="256 kBit/s" commandline="--abr 256"/>
+                    <item caption="320 kBit/s" commandline="--abr 320"/>
+                </control>
+                <control type="combobox" caption="CBR Bitrate (Constant Bitrate/Minimum Bitrate for VBR)" hint="When used with variable bitrate encodings (VBR), -b specifies the
+minimum bitrate to use.  This is useful to prevent LAME VBR from
+using some very aggressive compression which can cause some
+distortion due to small flaws in the psycho-acoustic model.">
+                    <item caption="No CBR" commandline="" selected="true"/>
+                    <item caption="8 kBit/s" commandline="-b 8"/>
+                    <item caption="16 kBit/s" commandline="-b 16"/>
+                    <item caption="32 kBit/s" commandline="-b 32"/>
+                    <item caption="64 kBit/s" commandline="-b 64"/>
+                    <item caption="96 kBit/s" commandline="-b 96"/>
+                    <item caption="128 kBit/s" commandline="-b 128"/>
+                    <item caption="144 kBit/s" commandline="-b 144"/>
+                    <item caption="160 kBit/s" commandline="-b 160"/>
+                    <item caption="192 kBit/s" commandline="-b 192"/>
+                    <item caption="224 kBit/s" commandline="-b 224"/>
+                    <item caption="256 kBit/s" commandline="-b 256"/>
+                    <item caption="320 kBit/s" commandline="-b 320"/>
+                </control>
+            </control>
+            <control type="groupbox" caption=" Cannel mode " fontstyle="bold">
+                <control type="columnset">
+                    <column>
+                        <control type="combobox" width="154">
+                            <item caption="default" commandline="" selected="true"/>
+                            <item caption="stereo" commandline="-m s"/>
+                            <item caption="mono" commandline="-m m"/>
+                            <item caption="joint stereo" commandline="-m j"/>
+                            <item caption="force ms_stereo" commandline="-m f"/>
+                            <item caption="auto" commandline="-m a"/>
+                        </control>
+                    </column>
+                    <column>
+                        <control type="checkbox" caption="downmix from stereo to mono" commandline="-a" hint="This option is only needed in the case of raw PCM stereo input
+(because LAME cannot determine the number of channels in the input file)."/>
+                    </column>
+                </control>
+
+            </control>
+        </tabsheet>
+        <tabsheet caption="Advanced">
+            <control type="columnset">
+                <column>
+                    <control type="groupbox" caption=" Noise shaping + psycho acoustic algorithms ">
+                        <control type="combobox" width="100">
+                            <item caption="None" commandline=""/>
+                            <item caption="Speed" commandline="-f"/>
+                            <item caption="Quality" commandline="-h" selected="true"/>
+                        </control>
+                    </control>
+                </column>
+                <column>
+                    <control type="groupbox" caption=" Process priority ">
+                        <control type="combobox" width="210">
+                            <item caption="Standard" commandline="" selected="true"/>
+                            <item caption="below IDLE_PRIORITY_CLASS" commandline="--priority 0"/>
+                            <item caption="IDLE_PRIORITY_CLASS" commandline="--priority 1"/>
+                            <item caption="NORMAL_PRIORITY_CLASS" commandline="--priority 2"/>
+                            <item caption="HIGH_PRIORITY_CLASS" commandline="--priority 3"/>
+                            <item caption="above HIGH_PRIORITY_CLASS" commandline="--priority 4"/>
+                            <item caption="above HIGH_PRIORITY_CLASS" commandline="--priority 4"/>
+                        </control>
+                    </control>
+                </column>
+            </control>
+            <control type="spacer" height="-4"/>
+            <control type="columnset">
+                <column>
+                    <control type="groupbox" caption=" Flags ">
+                        <control type="checkbox" caption="Include CRC-Checksum" commandline="-p"/>
+                        <control type="checkbox" caption="Copy flag" commandline="-o"/>
+                        <control type="checkbox" caption="Copyright flag" commandline="-c"/>
+                    </control>
+                </column>
+                <column>
+                    <control type="groupbox" caption=" Bithandling ">
+                        <control type="checkbox" caption="Comply to ISO MPEG spec" commandline="--strictly-enforce-ISO"/>
+                        <control type="checkbox" caption="Disable the bit reservoir" commandline="--nores"/>
+                        <control type="spacer" height="22"/>
+                    </control>
+                </column>
+            </control>
+            <control type="spacer" height="-4"/>
+            <control type="columnset">
+                <column>
+                    <control type="groupbox" caption=" Verbosity ">
+                        <control type="checkbox" caption="Disable display of VBR bitrate histogram" commandline="--nohist"/>
+                        <control type="checkbox" caption="Don't print anything on screen" commandline="--silent"/>
+                        <control type="checkbox" caption="Print more useful information" commandline="--brief"/>
+                        <control type="checkbox" caption="Print a lot of useful information" commandline="--verbose"/>
+                    </control>
+                </column>
+                <column>
+                    <control type="groupbox" caption=" Experimental">
+                        <control type="checkbox" caption="Voice encoding mode. For 44.1 kHz" commandline="--voice"/>
+                        <control type="checkbox" caption="Lets LAME ignore noise in sfb21." commandline="-Y"/>
+                        <control type="checkbox" caption="Toggles the scalefac feature on." commandline="-Z"/>
+                        <control type="spacer" height="22"/>
+                    </control>
+                </column>
+            </control>
+        </tabsheet>
+        <tabsheet caption="ID3 Tag options">
+            <control type="edit" caption="Song title (max 30 chars for v.1 tag)" commandline="--tt " width="200"/>
+            <control type="edit" caption="Song artist (max 30 chars for v.1 tag)" commandline="--ta " width="200"/>
+            <control type="edit" caption="Song album (max 30 chars for v.1 tag)" commandline="--tl " width="200"/>
+            <control type="edit" caption="Song year of issue (1 to 9999)" commandline="--ty " width="200"/>
+            <control type="edit" caption="Comment/user-defined text (max 30 chars)" commandline="--tc " width="200"/>
+            <control type="edit" caption="Song track number" commandline="--tn " width="200"/>
+            <control type="combobox" caption="Song genre" width="201">
+<item caption="None" commandline=""/>
+<item caption="A Cappella" commandline="--tg 123"/>
+<item caption="Acid" commandline="--tg 34"/>
+<item caption="Acid Jazz" commandline="--tg 74"/>
+<item caption="Acid Punk" commandline="--tg 73"/>
+<item caption="Acoustic" commandline="--tg 99"/>
+<item caption="Alternative" commandline="--tg 20"/>
+<item caption="Alt" commandline="--tg 40"/>. Rock
+<item caption="Ambient" commandline="--tg 26"/>
+<item caption="Anime" commandline="--tg 145"/>
+<item caption="Avantgarde" commandline="--tg 90"/>
+<item caption="Ballad" commandline="--tg 116"/>
+<item caption="Bass" commandline="--tg 41"/>
+<item caption="Beat" commandline="--tg 135"/>
+<item caption="Bebob" commandline="--tg 85"/>
+<item caption="Big Band" commandline="--tg 96"/>
+<item caption="Black Metal" commandline="--tg 138"/>
+<item caption="Bluegrass" commandline="--tg 89"/>
+<item caption="Blues" commandline="--tg 0"/>
+<item caption="Booty Bass" commandline="--tg 107"/>
+<item caption="BritPop" commandline="--tg 132"/>
+<item caption="Cabaret" commandline="--tg 65"/>
+<item caption="Celtic" commandline="--tg 88"/>
+<item caption="Chamber Music" commandline="--tg 104"/>
+<item caption="Chanson" commandline="--tg 102"/>
+<item caption="Chorus" commandline="--tg 97"/>
+<item caption="Christian Gangsta Rap" commandline="--tg 136"/>
+<item caption="Christian Rap" commandline="--tg 61"/>
+<item caption="Christian Rock" commandline="--tg 141"/>
+<item caption="Classical" commandline="--tg 32"/>
+<item caption="Classic Rock" commandline="--tg 1"/>
+<item caption="Club" commandline="--tg 112"/>
+<item caption="Club-House" commandline="--tg 128"/>
+<item caption="Comedy" commandline="--tg 57"/>
+<item caption="Contemporary Christian" commandline="--tg 140"/>
+<item caption="Country" commandline="--tg 2"/>
+<item caption="Crossover" commandline="--tg 139"/>
+<item caption="Cult" commandline="--tg 58"/>
+<item caption="Dance" commandline="--tg 3"/>
+<item caption="Dance Hall" commandline="--tg 125"/>
+<item caption="Darkwave" commandline="--tg 50"/>
+<item caption="Death Metal" commandline="--tg 22"/>
+<item caption="Disco" commandline="--tg 4"/>
+<item caption="Dream" commandline="--tg 55"/>
+<item caption="Drum + Bass" commandline="--tg 127"/>
+<item caption="Drum Solo" commandline="--tg 122"/>
+<item caption="Duet" commandline="--tg 120"/>
+<item caption="Easy Listening" commandline="--tg 98"/>
+<item caption="Electronic" commandline="--tg 52"/>
+<item caption="Ethnic" commandline="--tg 48"/>
+<item caption="Eurodance" commandline="--tg 54"/>
+<item caption="Euro-House" commandline="--tg 124"/>
+<item caption="Euro-Techno" commandline="--tg 25"/>
+<item caption="Fast-Fusion" commandline="--tg 84"/>
+<item caption="Folk" commandline="--tg 80"/>
+<item caption="Folklore" commandline="--tg 115"/>
+<item caption="Folk" commandline="--tg 81"/>/Rock
+<item caption="Freestyle" commandline="--tg 119"/>
+<item caption="Funk" commandline="--tg 5"/>
+<item caption="Fusion" commandline="--tg 30"/>
+<item caption="Game" commandline="--tg 36"/>
+<item caption="Gangsta Rap" commandline="--tg 59"/>
+<item caption="Goa" commandline="--tg 126"/>
+<item caption="Gospel" commandline="--tg 38"/>
+<item caption="Gothic" commandline="--tg 49"/>
+<item caption="Gothic Rock" commandline="--tg 91"/>
+<item caption="Grunge" commandline="--tg 6"/>
+<item caption="Hardcore" commandline="--tg 129"/>
+<item caption="Hard Rock" commandline="--tg 79"/>
+<item caption="Heavy Metal" commandline="--tg 137"/>
+<item caption="Hip" commandline="--tg 7"/>-Hop
+<item caption="House" commandline="--tg 35"/>
+<item caption="Humour" commandline="--tg 100"/>
+<item caption="Indie" commandline="--tg 131"/>
+<item caption="Industrial" commandline="--tg 19"/>
+<item caption="Instrumental" commandline="--tg 33"/>
+<item caption="Instrumental Pop" commandline="--tg 46"/>
+<item caption="Instrumental Rock" commandline="--tg 47"/>
+<item caption="Jazz" commandline="--tg 8"/>
+<item caption="Jazz" commandline="--tg 29"/>+Funk
+<item caption="JPop" commandline="--tg 146"/>
+<item caption="Jungle" commandline="--tg 63"/>
+<item caption="Latin" commandline="--tg 86"/>
+<item caption="Lo" commandline="--tg 71"/>-Fi
+<item caption="Meditative" commandline="--tg 45"/>
+<item caption="Merengue" commandline="--tg 142"/>
+<item caption="Metal" commandline="--tg 9"/>
+<item caption="Musical" commandline="--tg 77"/>
+<item caption="National Folk" commandline="--tg 82"/>
+<item caption="Native American" commandline="--tg 64"/>
+<item caption="Negerpunk" commandline="--tg 133"/>
+<item caption="New Age" commandline="--tg 10"/>
+<item caption="New Wave" commandline="--tg 66"/>
+<item caption="Noise" commandline="--tg 39"/>
+<item caption="Oldies" commandline="--tg 11"/>
+<item caption="Opera" commandline="--tg 103"/>
+<item caption="Other" commandline="--tg 12"/>
+<item caption="Polka" commandline="--tg 75"/>
+<item caption="Polsk Punk" commandline="--tg 134"/>
+<item caption="Pop" commandline="--tg 13"/>
+<item caption="Pop-Folk" commandline="--tg 53"/>
+<item caption="Pop/Funk" commandline="--tg 62"/>
+<item caption="Porn Groove" commandline="--tg 109"/>
+<item caption="Power Ballad" commandline="--tg 117"/>
+<item caption="Pranks" commandline="--tg 23"/>
+<item caption="Primus" commandline="--tg 108"/>
+<item caption="Progressive Rock" commandline="--tg 92"/>
+<item caption="Psychedelic" commandline="--tg 67"/>
+<item caption="Psychedelic Rock" commandline="--tg 93"/>
+<item caption="Punk" commandline="--tg 43"/>
+<item caption="Punk Rock" commandline="--tg 121"/>
+<item caption="Rap" commandline="--tg 15"/>
+<item caption="Rave" commandline="--tg 68"/>
+<item caption="R'n'B" commandline="--tg 14"/>
+<item caption="Reggae" commandline="--tg 16"/>
+<item caption="Retro" commandline="--tg 76"/>
+<item caption="Revival" commandline="--tg 87"/>
+<item caption="Rhythmic Soul" commandline="--tg 118"/>
+<item caption="Rock" commandline="--tg 17"/>
+<item caption="Rock+Roll" commandline="--tg 78"/>
+<item caption="Salsa" commandline="--tg 143"/>
+<item caption="Samba" commandline="--tg 114"/>
+<item caption="Satire" commandline="--tg 110"/>
+<item caption="Showtunes" commandline="--tg 69"/>
+<item caption="Ska" commandline="--tg 21"/>
+<item caption="Slow Jam" commandline="--tg 111"/>
+<item caption="Slow Rock" commandline="--tg 95"/>
+<item caption="Sonata" commandline="--tg 105"/>
+<item caption="Soul" commandline="--tg 42"/>
+<item caption="Sound Clip" commandline="--tg 37"/>
+<item caption="Soundtrack" commandline="--tg 24"/>
+<item caption="Southern Rock" commandline="--tg 56"/>
+<item caption="Space" commandline="--tg 44"/>
+<item caption="Speech" commandline="--tg 101"/>
+<item caption="Swing" commandline="--tg 83"/>
+<item caption="Symphonic Rock" commandline="--tg 94"/>
+<item caption="Symphony" commandline="--tg 106"/>
+<item caption="Synthpop" commandline="--tg 147"/>
+<item caption="Tango" commandline="--tg 113"/>
+<item caption="Techno" commandline="--tg 18"/>
+<item caption="Techno-Industrial" commandline="--tg 51"/>
+<item caption="Terror" commandline="--tg 130"/>
+<item caption="Thrash Metal" commandline="--tg 144"/>
+<item caption="Top " commandline="--tg 60"/>40
+<item caption="Trailer" commandline="--tg 70"/>
+<item caption="Trance" commandline="--tg 31"/>
+<item caption="Tribal" commandline="--tg 72"/>
+<item caption="Trip-Hop" commandline="--tg 27"/>
+<item caption="Vocal" commandline="--tg 28"/>
+</control>
+            <control type="groupbox" caption=" Version options ">
+                <control type="columnset">
+                    <column>
+                        <control type="checkbox" caption="Force addition of v.2 tag" commandline="--add-id3v2"/>
+                        <control type="checkbox" caption="Add only a v.1 tag" commandline="--id3v1-only"/>
+                        <control type="checkbox" caption="Add only a v.2 tag" commandline="--id3v2-only"/>
+                    </column>
+                    <column>
+                        <control type="checkbox" caption="Pad v.1 tag with spaces instead of nulls" commandline="--space-id3v1"/>
+                        <control type="checkbox" caption="Pad v.2 tag with extra 128 bytes" commandline="--pad-id3v2"/>
+                    </column>
+                </control>
+
+            </control>
+            <control type="spacer" height="-4"/>
+        </tabsheet>
+        <tabsheet caption="Audio Processing">
+            <control type="groupbox" caption=" Filtering ">
+                <control type="edit" caption="Lowpass filtering, cutoff above (kHz)" commandline="--lowpass " width="100"/>
+                <control type="edit" caption="Lowpass width (kHz)" commandline="--lowpass-width " width="100"/>
+                <control type="edit" caption="Highpass filtering, cutoff above (kHz)" commandline="--highpass " width="100"/>
+                <control type="edit" caption="Highpass width (kHz)" commandline="--highpass-width " width="100"/>
+            </control>
+            <control type="groupbox" caption=" Resampling ">
+                <control type="combobox" caption="Output sampling frequency in kHz" width="100">
+                    <item caption="No Resampling" commandline="" selected="true"/>
+                    <item caption="8 kHz" commandline="--resample 8"/>
+                    <item caption="11.025 kHz" commandline="--resample 11.025"/>
+                    <item caption="12 kHz" commandline="--resample 12"/>
+                    <item caption="16 kHz" commandline="--resample 16"/>
+                    <item caption="22.05 kHz" commandline="--resample 22.05"/>
+                    <item caption="24 kHz" commandline="--resample 24"/>
+                    <item caption="32 kHz" commandline="--resample 32"/>
+                    <item caption="44.1 kHz" commandline="--resample 44.1"/>
+                    <item caption="48 kHz" commandline="--resample 48"/>
+                </control>
+            </control>
+        </tabsheet>
+        <tabsheet caption="Decode options">
+            <control type="combobox" caption="Format of inputfile">
+                <item caption="No decode" commandline="" selected="true"/>
+                <item caption="MPEG Layer I  file" commandline="--mp1input"/>
+                <item caption="MPEG Layer II file" commandline="--mp2input"/>
+                <item caption="MPEG Layer III  file" commandline="--mp3input"/>
+            </control>
+            <control type="edit" caption="Input bit width (default 16)" commandline="--bitwidth " width="50"/>
+            <control type="checkbox" caption="Assume input file is an mp3 file, and decode to wav" commandline="--decode"/>
+            <control type="checkbox" caption="Decode to raw pcm, native endian format" commandline="-t"/>
+            <control type="checkbox" caption="Swap bytes of input file" commandline="-x"/>
+        </tabsheet>
+        <tabsheet caption="Gapless Output">
+            <control type="radiogroup" caption="Filedropmode" colums="1">
+                <button caption="Normal: Encode one file after the other" commandline="@dropfiles" selected="true"/>
+                <button caption="Gapless encoding: all dropped files for one parameter" commandline="--nogap @alldropfiles"/>
+            </control>
+            <control type="newextdropfiles" newextension=".mp3"/>
+            <control type="selectdir" caption="Output directory for gapless encoding" commandline="--nogapout "/>
+            <control type="checkbox" caption="Use directory of first file as outputdirectory" commandline="--nogapout @dropparentfolder"/>
+        </tabsheet>
+    </control>
+</form >
