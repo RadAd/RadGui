@@ -72,19 +72,19 @@ void ControlDef::CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxC
 }
 
 ButtonDef::ButtonDef(int iIcon)
-    : ControlDef(WC_BUTTON, nullptr, WS_TABSTOP | WS_VISIBLE | BS_ICON, 0, 20, 14)
+    : ControlDef(WC_BUTTON, nullptr, nullptr, WS_TABSTOP | WS_VISIBLE | BS_ICON, 0, 20, 14)
     , m_iIcon(iIcon)
 {
 }
 
-ButtonDef::ButtonDef(LPCTSTR sText)
-    : ControlDef(WC_BUTTON, sText, WS_TABSTOP | WS_VISIBLE, 0, 50, 14)
+ButtonDef::ButtonDef(LPCTSTR sId, LPCTSTR sText)
+    : ControlDef(WC_BUTTON, sId, sText, WS_TABSTOP | WS_VISIBLE, 0, 50, 14)
     , m_iIcon(0)
 {
 }
 
-ComboBoxDef::ComboBoxDef(LPCTSTR sCaption)
-    : ControlDef(WC_COMBOBOX, _T(""), WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, 14)
+ComboBoxDef::ComboBoxDef(LPCTSTR sId, LPCTSTR sCaption)
+    : ControlDef(WC_COMBOBOX, sId, _T(""), WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, 14)
 {
     if (sCaption != nullptr)
         m_sCaption = sCaption;
@@ -122,8 +122,8 @@ std::wstring ComboBoxDef::GetCommandValue() const
         return std::wstring();
 }
 
-CheckBoxDef::CheckBoxDef(LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine)
-    : ControlWithChildrenDef(WC_BUTTON, sText, WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX, 0, 0, 10)
+CheckBoxDef::CheckBoxDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine)
+    : ControlWithChildrenDef(WC_BUTTON, sId, sText, WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX, 0, 0, 10)
     , m_bChecked(bChecked)
 {
     if (sCommandLine)
@@ -140,8 +140,8 @@ bool CheckBoxDef::GetCheck() const
     return Button_GetCheck(m_Ctrl.GetHWND()) == BST_CHECKED;
 }
 
-RadioDef::RadioDef(LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine)
-    : ControlWithChildrenDef(WC_BUTTON, sText, WS_TABSTOP | WS_VISIBLE | BS_AUTORADIOBUTTON, 0, 0, 10)
+RadioDef::RadioDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine)
+    : ControlWithChildrenDef(WC_BUTTON, sId, sText, WS_TABSTOP | WS_VISIBLE | BS_AUTORADIOBUTTON, 0, 0, 10)
     , m_bChecked(bChecked)
 {
     if (sCommandLine)
@@ -169,19 +169,19 @@ bool RadioDef::GetCheck() const
     return Button_GetCheck(m_Ctrl.GetHWND()) == BST_CHECKED;
 }
 
-ImageDef::ImageDef(LPCTSTR sFileName)
-    : ControlDef(WC_STATIC, _T(""), WS_TABSTOP | WS_VISIBLE | SS_BITMAP, 0, 0, 0)
+ImageDef::ImageDef(LPCTSTR sId, LPCTSTR sFileName)
+    : ControlDef(WC_STATIC, sId, _T(""), WS_TABSTOP | WS_VISIBLE | SS_BITMAP, 0, 0, 0)
     , m_hBitmap((HBITMAP) LoadImage(NULL, sFileName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE))
 {
 }
 
-TextDef::TextDef(LPCTSTR sText)
-    : ControlDef(WC_STATIC, sText, WS_TABSTOP | WS_VISIBLE, 0, 0, 0)
+TextDef::TextDef(LPCTSTR sId, LPCTSTR sText)
+    : ControlDef(WC_STATIC, sId, sText, WS_TABSTOP | WS_VISIBLE, 0, 0, 0)
 {
 }
 
 TabDef::TabDef()
-    : ControlDef(WC_TABCONTROL, _T(""), WS_TABSTOP | WS_VISIBLE | TCS_TABS, 0, 0, 0)
+    : ControlDef(WC_TABCONTROL, nullptr, _T(""), WS_TABSTOP | WS_VISIBLE | TCS_TABS, 0, 0, 0)
 {
 }
 
@@ -307,12 +307,12 @@ void TabDef::GetCommandLine(std::wstring& cl) const
 }
 
 GroupDef::GroupDef(LPCTSTR sText)
-    : ControlWithChildrenDef(WC_BUTTON, sText, WS_TABSTOP | WS_VISIBLE | WS_GROUP | BS_GROUPBOX, 0, 0, 0)
+    : ControlWithChildrenDef(WC_BUTTON, nullptr, sText, WS_TABSTOP | WS_VISIBLE | WS_GROUP | BS_GROUPBOX, 0, 0, 0)
 {
 }
 
-EditDef::EditDef(LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine)
-    : ControlDef(WC_EDIT, sValue, WS_TABSTOP | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 0, 0, 14)
+EditDef::EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine)
+    : ControlDef(WC_EDIT, sId, sValue, WS_TABSTOP | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 0, 0, 14)
 {
     if (sCaption != nullptr)
         m_sCaption = sCaption;

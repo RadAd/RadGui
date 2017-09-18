@@ -15,7 +15,7 @@
 		<radio caption="Rebuild" commandline="/t:rebuild" selected="true"/>
 	</groupbox>
   <horzlayout>
-    <edit caption="Project:" default="D:\AXG\RMS-R\Src\OPCrew.sln"/>
+    <edit id="project" caption="Project:" default="D:\AXG\RMS-R\Src\OPCrew.sln"/>
     <selectfile filter="*.sln"/>
   </horzlayout>
 </dialog>

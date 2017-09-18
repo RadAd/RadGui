@@ -51,10 +51,11 @@ void ProcessRadioGroup(VerticalLayout& controls, MSXML2::IXMLDOMNode* pXMLNode)
 
             if (bstrName == L"item" || bstrName == L"button")
             {
+                _bstr_t bstrId = GetAttribute(pXMLChildNode, _T("id"));
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrSelected = GetAttribute(pXMLChildNode, _T("selected"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new RadioDef(bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
+                controls.Add(new RadioDef(bstrId, bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
             }
             else
                 // TODO Unknown node bstrName
@@ -136,13 +137,14 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
             //_bstr_t bstrName = pXMLChildNode->GetbaseName();
 
             _bstr_t bstrType = GetAttribute(pXMLChildNode, _T("type"));
+            _bstr_t bstrId = GetAttribute(pXMLChildNode, _T("id"));
 
             if (bstrType == L"image")
             {
                 _bstr_t bstrFilename = GetAttribute(pXMLChildNode, _T("filename"));
                 TCHAR sFile[MAX_PATH];
                 PathCombine(sFile, sDir, bstrFilename);
-                controls.Add(new ImageDef(sFile));
+                controls.Add(new ImageDef(bstrId, sFile));
             }
             else if (bstrType == L"radiogroup")
             {
@@ -155,7 +157,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrWidth = GetAttribute(pXMLChildNode, _T("width"));
-                std::unique_ptr<ComboBoxDef> cbd(new ComboBoxDef(bstrCaption));
+                std::unique_ptr<ComboBoxDef> cbd(new ComboBoxDef(bstrId, bstrCaption));
                 if (!!bstrWidth)
                     cbd->SetWidth(_wtoi(bstrWidth));
                 ProcessComboBox(*cbd, pXMLChildNode);
@@ -171,21 +173,21 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
             else if (bstrType == L"text")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
-                controls.Add(new TextDef(bstrCaption));
+                controls.Add(new TextDef(bstrId, bstrCaption));
             }
             else if (bstrType == L"edit")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new EditDef(bstrCaption, bstrDefault, bstrCommandLine));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
             }
             else if (bstrType == L"checkbox")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrChecked = GetAttribute(pXMLChildNode, _T("checked"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new CheckBoxDef(bstrCaption, !!bstrChecked && bstrChecked == L"true", bstrCommandLine));
+                controls.Add(new CheckBoxDef(bstrId, bstrCaption, !!bstrChecked && bstrChecked == L"true", bstrCommandLine));
             }
             else if (bstrType == L"tabset")
             {
@@ -225,7 +227,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                hs->Add(new EditDef(bstrCaption, bstrDefault, bstrCommandLine));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
                 hs->Add(new SelectDirDef());
                 controls.Add(hs.release());
             }
@@ -236,7 +238,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                hs->Add(new EditDef(bstrCaption, bstrDefault, bstrCommandLine));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
                 hs->Add(new SelectFileDef());
                 controls.Add(hs.release());
             }
@@ -261,6 +263,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
         if (type == NODE_ELEMENT)
         {
             _bstr_t bstrName = pXMLChildNode->GetbaseName();
+            _bstr_t bstrId = GetAttribute(pXMLChildNode, _T("id"));
 
             if (bstrName == L"groupbox")
             {
@@ -274,7 +277,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrSelected = GetAttribute(pXMLChildNode, _T("selected"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                std::unique_ptr<RadioDef> rd(new RadioDef(bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
+                std::unique_ptr<RadioDef> rd(new RadioDef(bstrId, bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
                 ProcessDialogControls(rd->m_Children, pXMLChildNode, sDir);
                 controls.Add(rd.release());
             }
@@ -283,7 +286,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrSelected = GetAttribute(pXMLChildNode, _T("selected"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                std::unique_ptr<CheckBoxDef> cbd(new CheckBoxDef(bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
+                std::unique_ptr<CheckBoxDef> cbd(new CheckBoxDef(bstrId, bstrCaption, !!bstrSelected && bstrSelected == L"true", bstrCommandLine));
                 ProcessDialogControls(cbd->m_Children, pXMLChildNode, sDir);
                 controls.Add(cbd.release());
             }
@@ -292,7 +295,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new EditDef(bstrCaption, bstrDefault, bstrCommandLine));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
             }
             else if (bstrName == L"selectfile")
             {

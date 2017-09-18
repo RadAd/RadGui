@@ -30,8 +30,8 @@ class RadGui : public Dialog
 public:
     RadGui(LPCTSTR sCaption, LPCTSTR sProgram, int pxWidth)
         : m_pxWidth(pxWidth)
-        , m_hEdit(nullptr, nullptr, nullptr)
-        , m_hExecute(_T("E&xecute"))
+        , m_hEdit(nullptr, nullptr, nullptr, nullptr)
+        , m_hExecute(nullptr, _T("E&xecute"))
     {
         if (sCaption)
             m_sCaption = sCaption;
@@ -207,11 +207,20 @@ int CALLBACK WinMain(
         // TODO LocalFree(argv);
 
         LPCWSTR file = nullptr;
+        std::map<std::wstring, std::wstring> properties;
 
         for (int i = 1; i < argc; ++i)
         {
-            if (file == nullptr)
-                file = argv[i];
+            LPCWSTR arg = argv[i];
+            if (_wcsnicmp(arg, L"/p:", 3) == 0)
+            {
+                LPCWSTR prop = arg + 3;
+                LPCWSTR eq = wcschr(prop, L'=');
+                LPCWSTR value = eq + 1;
+                properties[std::wstring(prop, eq)] = value;
+            }
+            else if (file == nullptr)
+                file = arg;
             else
                 throw std::exception("Too many paramters");
         }
@@ -267,6 +276,17 @@ int CALLBACK WinMain(
         else
             // TODO Unknown node bstrName
             throw std::exception("RootNode");
+
+        for (auto it = properties.begin(); it != properties.end(); ++it)
+        {
+            ControlDef* cd = dlg.m_controls.FindId(it->first.c_str());
+            if (cd != nullptr)
+            {
+                EditDef* ed = dynamic_cast<EditDef*>(cd);
+                if (ed != nullptr)
+                    ed->SetValue(it->second.c_str());
+            }
+        }
 
         {
             std::unique_ptr<HorizontalLayout> hs(new HorizontalLayout());

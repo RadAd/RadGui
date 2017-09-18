@@ -21,6 +21,7 @@ public:
     virtual void Show(bool show) = 0;
     virtual void Enable(bool enable) = 0;
     virtual ControlDef* Find(HWND hCtrl) = 0;
+    virtual ControlDef* FindId(LPCWSTR id) = 0;
     virtual bool Fill() const { return false; }
     virtual void GetCommandLine(std::wstring& cl) const = 0;
 };
@@ -63,6 +64,17 @@ public:
         for (BaseDef* bd : m_controls)
         {
             ControlDef* cd = bd->Find(hCtrl);
+            if (cd != nullptr)
+                return cd;
+        }
+        return nullptr;
+    }
+
+    virtual ControlDef* FindId(LPCWSTR id) override
+    {
+        for (BaseDef* bd : m_controls)
+        {
+            ControlDef* cd = bd->FindId(id);
             if (cd != nullptr)
                 return cd;
         }
@@ -199,13 +211,15 @@ public:
 class ControlDef : public BaseDef
 {
 public:
-    ControlDef(LPCTSTR sClass, LPCTSTR sText, DWORD dwStyle, DWORD dwExStyle, int dluWidth, int dluHeight)
+    ControlDef(LPCTSTR sClass, LPCTSTR sId, LPCTSTR sText, DWORD dwStyle, DWORD dwExStyle, int dluWidth, int dluHeight)
         : m_sClass(sClass)
         , m_dwStyle(dwStyle)
         , m_dwExStyle(dwExStyle)
         , m_dluWidth(dluWidth)
         , m_dluHeight(dluHeight)
     {
+        if (sId)
+            m_sId = sId;
         if (sText)
             m_sText = sText;
     }
@@ -265,6 +279,11 @@ public:
         return (hCtrl == GetHWnd()) ? this : nullptr;
     }
 
+    virtual ControlDef* FindId(LPCWSTR id) override
+    {
+        return (m_sId == id) ? this : nullptr;
+    }
+
     virtual bool UseCommandLine() const
     {
         return !m_CommandLine.empty();
@@ -307,6 +326,7 @@ protected:
     rad::WindowProxy m_Ctrl;
     rad::WindowProxy m_hCaption;
     std::wstring m_sCaption;
+    std::wstring m_sId;
     std::wstring m_sText;
     LPCTSTR m_sClass;
     DWORD m_dwStyle;
@@ -363,7 +383,7 @@ class ButtonDef : public ControlDef
 {
 public:
     ButtonDef(int iIcon);
-    ButtonDef(LPCTSTR sText);
+    ButtonDef(LPCTSTR sId, LPCTSTR sText);
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
     {
@@ -440,7 +460,7 @@ public:
 class ComboBoxDef : public ControlDef
 {
 public:
-    ComboBoxDef(LPCTSTR sCaption);
+    ComboBoxDef(LPCTSTR sId, LPCTSTR sCaption);
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset);
     virtual SIZE GetSize(rad::WindowProxy& Dlg, int w) const;
@@ -487,7 +507,7 @@ private:
 class CheckBoxDef : public ControlWithChildrenDef
 {
 public:
-    CheckBoxDef(LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
+    CheckBoxDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
     {
@@ -552,7 +572,7 @@ private:
 class RadioDef : public ControlWithChildrenDef
 {
 public:
-    RadioDef(LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
+    RadioDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
     {
@@ -620,7 +640,7 @@ private:
 class ImageDef : public ControlDef
 {
 public:
-    ImageDef(LPCTSTR sFileName);
+    ImageDef(LPCTSTR sId, LPCTSTR sFileName);
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
     {
@@ -652,7 +672,7 @@ private:
 class TextDef : public ControlDef
 {
 public:
-    TextDef(LPCTSTR sText);
+    TextDef(LPCTSTR sId, LPCTSTR sText);
 
     virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
     {
@@ -772,7 +792,12 @@ public:
 class EditDef : public ControlDef
 {
 public:
-    EditDef(LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine);
+    EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine);
+
+    void SetValue(LPCTSTR sValue)
+    {
+        m_sText = sValue;
+    }
 
     void SetText(LPCTSTR sValue)
     {
