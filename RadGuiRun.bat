@@ -5,4 +5,4 @@
 echo.
 echo Exitcode: %ERRORLEVEL%
 ConFlash
-pause
+if /I "%RADGUI_PAUSE%" == "true" pause

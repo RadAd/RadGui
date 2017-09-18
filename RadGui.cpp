@@ -114,8 +114,16 @@ protected:
 
             STARTUPINFO si = { sizeof(STARTUPINFO) };
             //si.lpTitle = const_cast<LPTSTR>(cmdorig.c_str());
+            si.dwFlags |= STARTF_USESTDHANDLES;
+            si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+            si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
             PROCESS_INFORMATION pi = {};
-            if (CreateProcess(nullptr, const_cast<LPTSTR>(cmd.c_str()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
+            DWORD dwCreationFlags = 0;
+            if (si.hStdOutput != NULL)
+                dwCreationFlags |= CREATE_NO_WINDOW;
+            SetEnvironmentVariable(_T("RADGUI_PAUSE"), si.hStdInput || !si.hStdOutput ? _T("true") : _T("false"));
+            if (CreateProcess(nullptr, const_cast<LPTSTR>(cmd.c_str()), nullptr, nullptr, TRUE, dwCreationFlags, nullptr, nullptr, &si, &pi) == 0)
             {
                 WinError we(_T("Error creating process: "));
                 MessageBox(*this, we.GetString().c_str(), _T("RadGui"), MB_ICONINFORMATION | MB_OK);
