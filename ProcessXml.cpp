@@ -180,7 +180,8 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
+                _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrQuote == _T("true")));
             }
             else if (bstrType == L"checkbox")
             {
@@ -227,7 +228,8 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
+                _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrQuote == _T("true")));
                 hs->Add(new SelectDirDef());
                 controls.Add(hs.release());
             }
@@ -238,7 +240,8 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
+                _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrQuote == _T("true")));
                 hs->Add(new SelectFileDef());
                 controls.Add(hs.release());
             }
@@ -295,7 +298,8 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
-                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine));
+                _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrQuote == _T("true")));
             }
             else if (bstrName == L"selectfile")
             {

@@ -792,7 +792,7 @@ public:
 class EditDef : public ControlDef
 {
 public:
-    EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine);
+    EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bQuote);
 
     void SetValue(LPCTSTR sValue)
     {
@@ -821,12 +821,8 @@ public:
         return !m_bIgnore && m_Ctrl.GetWindowTextLength() > 0;
     }
 
-    virtual std::wstring GetCommandValue() const
-    {
-        TCHAR text[1024] = _T("");
-        m_Ctrl.GetWindowText(text);
-        return text;
-    }
+    virtual std::wstring GetCommandValue() const override;
 
+    bool m_bQuote;
     bool m_bIgnore = false;
 };

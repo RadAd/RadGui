@@ -1,0 +1,7 @@
+<dialog caption="Find" program="findstr.exe" width="403">
+    <edit id="text" caption="Text:" commandline="/C:" quote="true"/>
+    <checkbox caption="Recursive" commandline="/S" selected="true"/>
+    <checkbox caption="Case-insensitive" commandline="/I" selected="true"/>
+    <edit caption="Other:" default="/P /N /A:0f"/>
+    <edit caption="Files:" default="*.*"/>
+</dialog>

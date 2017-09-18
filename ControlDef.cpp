@@ -3,6 +3,7 @@
 #include <CommCtrl.h>
 #include <Windowsx.h>
 #include <Shlobj.h>
+#include <Shlwapi.h>
 
 #include <Rad\GUI\WindowCreate.h>
 
@@ -311,13 +312,23 @@ GroupDef::GroupDef(LPCTSTR sText)
 {
 }
 
-EditDef::EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine)
+EditDef::EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bQuote)
     : ControlDef(WC_EDIT, sId, sValue, WS_TABSTOP | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 0, 0, 14)
+    , m_bQuote(bQuote)
 {
     if (sCaption != nullptr)
         m_sCaption = sCaption;
     if (sCommandLine)
         m_CommandLine = sCommandLine;
+}
+
+std::wstring EditDef::GetCommandValue() const
+{
+    TCHAR text[1024] = _T("");
+    m_Ctrl.GetWindowText(text);
+    if (m_bQuote)
+        PathQuoteSpaces(text);
+    return text;
 }
 
 SelectDirDef::SelectDirDef()
