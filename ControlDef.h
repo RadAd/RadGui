@@ -371,6 +371,14 @@ public:
         return cd;
     }
 
+    virtual ControlDef* FindId(LPCWSTR id)
+    {
+        ControlDef* cd = ControlDef::FindId(id);
+        if (cd == nullptr)
+            cd = m_Children.FindId(id);
+        return cd;
+    }
+
     virtual void GetCommandLine(std::wstring& cl) const
     {
         ControlDef::GetCommandLine(cl);
