@@ -688,7 +688,8 @@ public:
         SIZE dluSize = { 0, 8 };
         if (!m_sText.empty())
         {
-            HFONT hFont = m_Ctrl.GetFont();
+            //HFONT hFont = m_Ctrl.GetFont();
+            HFONT hFont = Dlg.GetFont();
             dluSize = CalcTextSize(Dlg, hFont, m_sText.c_str(), pxWidth);
             UnMapDialogSize(Dlg, &dluSize);
         }

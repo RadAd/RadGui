@@ -56,6 +56,11 @@ protected:
         PathUnquoteSpaces(sIcon);
         WORD iIndex = 0;
         HICON hAppIcon = ExtractAssociatedIcon(hInstance, sIcon, &iIndex);
+        if (_tcsicmp(PathFindFileName(sIcon), _T("shell32.dll")) == 0 && iIndex == 1)
+        {
+            DestroyIcon(hAppIcon);
+            hAppIcon = NULL;
+        }
         if (hAppIcon == NULL)
             hAppIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP));
         SetIcon(ICON_SMALL, hAppIcon);
