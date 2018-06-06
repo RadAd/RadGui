@@ -243,7 +243,8 @@ public:
     {
         if (!m_sCaption.empty())
         {
-            HFONT hFont = m_Ctrl.GetFont();
+            //HFONT hFont = m_Ctrl.GetFont();
+            HFONT hFont = Dlg.GetFont();
             return CalcTextSize(Dlg, hFont, m_sCaption.c_str()).cx;
         }
         else
