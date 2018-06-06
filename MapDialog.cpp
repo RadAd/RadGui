@@ -45,7 +45,7 @@ void MapDialogSize(WindowProxy& Dlg, LPSIZE lpdluSize)
 SIZE /*px*/ CalcTextSize(WindowProxy& Wnd, HFONT hFont, LPCWSTR pString, int pxWidth)
 {
     WindowDC DC(Wnd);
-    GDIObject font(hFont);  // TODO Pass in GDIObject
+    FontRef font(hFont);  // TODO Pass in GDIObject
     TempSelectObject oldfont(DC, font);
     RECT pxRect = { 0, 0, pxWidth, 0 };
     UINT Format = DT_CALCRECT | DT_EXPANDTABS;

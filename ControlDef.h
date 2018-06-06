@@ -742,7 +742,7 @@ private:
         }
 
         std::wstring m_sName;
-        PageDialog m_Dlg;
+        PageDialog* m_Dlg;
         VerticalLayout m_Children;
     };
 

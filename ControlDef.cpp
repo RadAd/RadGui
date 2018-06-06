@@ -66,7 +66,7 @@ void ControlDef::CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxC
 
     wc.Style = m_dwStyle | WS_CHILD;
     wc.ExStyle = m_dwExStyle;
-    wc.hMenu = (HMENU) (m_id == 0 ? id++ : m_id);
+    wc.hMenu = (HMENU) (INT_PTR) (m_id == 0 ? id++ : m_id);
     m_Ctrl = wc.Create(m_sText.c_str(), nullptr, m_sClass, Dlg);
 
     m_Ctrl.SetFont(hFont, FALSE);
@@ -218,13 +218,14 @@ void TabDef::CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCapti
 
     for (Page& p : m_Pages)
     {
-        p.m_Dlg.CreateDlg(hInstance, IDD_DIALOG2, m_Ctrl);
-        p.m_Dlg.SetWindowPos(NULL, pxChildRect.left - 2, pxChildRect.top, GetWidth(pxChildRect) + 2, GetHeight(pxChildRect) + 1, SWP_NOOWNERZORDER | SWP_NOZORDER);
+        p.m_Dlg = new PageDialog;
+        p.m_Dlg->CreateDlg(hInstance, IDD_DIALOG2, m_Ctrl);
+        p.m_Dlg->SetWindowPos(NULL, pxChildRect.left - 2, pxChildRect.top, GetWidth(pxChildRect) + 2, GetHeight(pxChildRect) + 1, SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-        p.m_Dlg.SetFont(hFont, FALSE);
+        p.m_Dlg->SetFont(hFont, FALSE);
 
         pxCaptionOffset = p.m_Children.GetLabelOffset(Dlg);
-        p.m_Children.CreateChild(p.m_Dlg, dluChildRect, pxCaptionOffset);
+        p.m_Children.CreateChild(*p.m_Dlg, dluChildRect, pxCaptionOffset);
     }
 
     ShowPage(true);
@@ -272,7 +273,7 @@ VerticalLayout& TabDef::GetPage(int i)
 void TabDef::ShowPage(bool show)
 {
     int i = TabCtrl_GetCurSel(m_Ctrl.GetHWND());
-    m_Pages[i].m_Dlg.ShowWindow(show ? SW_SHOW : SW_HIDE);
+    m_Pages[i].m_Dlg->ShowWindow(show ? SW_SHOW : SW_HIDE);
 }
 
 ControlDef* TabDef::Find(HWND hCtrl)
