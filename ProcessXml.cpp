@@ -242,7 +242,8 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
                 _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
                 hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrQuote == _T("true")));
-                hs->Add(new SelectFileDef());
+                _bstr_t bstrFilter = GetAttribute(pXMLChildNode, _T("filter"));
+                controls.Add(new SelectFileDef(bstrFilter));
                 controls.Add(hs.release());
             }
             else
@@ -303,8 +304,8 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
             }
             else if (bstrName == L"selectfile")
             {
-                // TODO Support filter
-                controls.Add(new SelectFileDef());
+                _bstr_t bstrFilter = GetAttribute(pXMLChildNode, _T("filter"));
+                controls.Add(new SelectFileDef(bstrFilter));
             }
             else if (bstrName == L"selectdir")
             {

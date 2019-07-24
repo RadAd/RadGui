@@ -4,6 +4,7 @@
 #include <Windowsx.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#include <algorithm>
 
 #include <Rad\GUI\WindowCreate.h>
 
@@ -382,7 +383,13 @@ int CALLBACK SelectDirDef::BrowseCallbackProc(
     return 0;
 }
 
-SelectFileDef::SelectFileDef()
+SelectFileDef::SelectFileDef(LPCTSTR sFilter)
     : ButtonDef(IDI_FOLDER_OPEN)
 {
+    if (sFilter != nullptr)
+    {
+        m_sFilter = sFilter;
+        std::replace(m_sFilter.begin(), m_sFilter.end(), L'|', L'\0');
+        m_sFilter += L'\0';
+    }
 }

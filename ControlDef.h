@@ -435,7 +435,7 @@ private:
 class SelectFileDef : public ButtonDef
 {
 public:
-    SelectFileDef();
+    SelectFileDef(LPCTSTR sFilter);
 
     virtual BOOL OnCommand(WORD NotifyCode)
     {
@@ -450,7 +450,7 @@ public:
                 OPENFILENAME ofn = { sizeof(OPENFILENAME) };
                 ofn.hwndOwner = m_Ctrl.GetAncestor(GA_ROOT);
                 ofn.lpstrTitle = _T("Select file");
-                //ofn.lpstrFilter = _T("*.sln;*.vcproj\0\0");       // TODO
+                ofn.lpstrFilter = m_sFilter.c_str();
                 ofn.lpstrFile = dir;
                 ofn.nMaxFile = MAX_PATH;
                 //ofn.lpstrInitialDir
@@ -464,6 +464,9 @@ public:
         }
         return FALSE;
     }
+
+private:
+    std::wstring m_sFilter;
 };
 
 class ComboBoxDef : public ControlDef
