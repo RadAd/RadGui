@@ -149,7 +149,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
             else if (bstrType == L"radiogroup")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
-                std::unique_ptr<GroupDef> gd(new GroupDef(bstrCaption));
+                std::unique_ptr<GroupDef> gd(new GroupDef(bstrId, bstrCaption));
                 ProcessRadioGroup(gd->m_Children, pXMLChildNode);
                 controls.Add(gd.release());
             }
@@ -166,7 +166,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
             else if (bstrType == L"groupbox")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
-                std::unique_ptr<GroupDef> gd(new GroupDef(bstrCaption));
+                std::unique_ptr<GroupDef> gd(new GroupDef(bstrId, bstrCaption));
                 ProcessFormControls(gd->m_Children, pXMLChildNode, sDir);
                 controls.Add(gd.release());
             }
@@ -272,7 +272,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
             if (bstrName == L"groupbox")
             {
                 _bstr_t bstrCaption = GetAttribute(pXMLChildNode, _T("caption"));
-                std::unique_ptr<GroupDef> gd(new GroupDef(bstrCaption));
+                std::unique_ptr<GroupDef> gd(new GroupDef(bstrId, bstrCaption));
                 ProcessDialogControls(gd->m_Children, pXMLChildNode, sDir);
                 controls.Add(gd.release());
             }

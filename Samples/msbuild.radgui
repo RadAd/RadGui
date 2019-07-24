@@ -15,7 +15,7 @@
 		<radio caption="Rebuild" commandline="/t:rebuild" selected="true"/>
 	</groupbox>
   <horzlayout>
-    <edit id="project" caption="Project:"/>
+    <edit id="project" caption="Project:" quote="true"/>
     <selectfile filter="All project files (*.sln;*.vcxproj;*.vcproj)|*.sln;*.vcxproj;*.vcproj|Solution files (*.sln)|*.sln|VC++ Project files (*.vcxproj;*.vcproj)|*.vcxproj;*.vcproj|All files (*.*)|*.*"/>
   </horzlayout>
 </dialog>

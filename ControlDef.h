@@ -22,6 +22,7 @@ public:
     virtual void Enable(bool enable) = 0;
     virtual ControlDef* Find(HWND hCtrl) = 0;
     virtual ControlDef* FindId(LPCWSTR id) = 0;
+    virtual void Save(std::map<std::wstring, std::wstring>& properties) = 0;
     virtual bool Fill() const { return false; }
     virtual void GetCommandLine(std::wstring& cl) const = 0;
 };
@@ -35,7 +36,7 @@ public:
         return cd;
     }
 
-    virtual int GetLabelOffset(rad::WindowProxy& Dlg) const
+    virtual int GetLabelOffset(rad::WindowProxy& Dlg) const override
     {
         int pxOffset = 0;
         for (BaseDef* cd : m_controls)
@@ -47,19 +48,19 @@ public:
         return pxOffset;
     }
 
-    virtual void Show(bool show)
+    virtual void Show(bool show) override
     {
         for (BaseDef* cd : m_controls)
             cd->Show(show);
     }
 
-    virtual void Enable(bool enable)
+    virtual void Enable(bool enable) override
     {
         for (BaseDef* cd : m_controls)
             cd->Enable(enable);
     }
 
-    virtual ControlDef* Find(HWND hCtrl)
+    virtual ControlDef* Find(HWND hCtrl) override
     {
         for (BaseDef* bd : m_controls)
         {
@@ -81,6 +82,14 @@ public:
         return nullptr;
     }
 
+    virtual void Save(std::map<std::wstring, std::wstring>& properties) override
+    {
+        for (BaseDef* bd : m_controls)
+        {
+            bd->Save(properties);
+        }
+    }
+
     virtual void GetCommandLine(std::wstring& cl) const
     {
         for (BaseDef* bd : m_controls)
@@ -96,7 +105,7 @@ protected:
 class VerticalLayout : public ChildrenLayout
 {
 public:
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         SIZE pxSize = { dluRect.right, dluRect.bottom };
         MapDialogSize(Dlg, &pxSize);
@@ -134,7 +143,7 @@ public:
         }
     }
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE dluSize = {};
         if (!m_controls.empty())
@@ -153,7 +162,7 @@ public:
 class HorizontalLayout : public ChildrenLayout
 {
 public:
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         SIZE pxSize = { dluRect.right, dluRect.bottom };
         MapDialogSize(Dlg, &pxSize);
@@ -192,7 +201,7 @@ public:
         }
     }
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE dluSize = {};
         if (!m_controls.empty())
@@ -224,9 +233,9 @@ public:
             m_sText = sText;
     }
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset);
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int /*w*/) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int /*w*/) const override
     {
         SIZE dluSize = {};
         if (m_dluWidth > 0)
@@ -239,7 +248,7 @@ public:
         return dluSize;
     }
 
-    virtual int GetLabelOffset(rad::WindowProxy& Dlg) const
+    virtual int GetLabelOffset(rad::WindowProxy& Dlg) const override
     {
         if (!m_sCaption.empty())
         {
@@ -261,21 +270,21 @@ public:
         return FALSE;
     }
 
-    virtual void Show(bool show)
+    virtual void Show(bool show) override
     {
         m_Ctrl.ShowWindow(show ? SW_SHOW : SW_HIDE);
         if (m_hCaption.IsAttached())
             m_hCaption.ShowWindow(show ? SW_SHOW : SW_HIDE);
     }
 
-    virtual void Enable(bool enable)
+    virtual void Enable(bool enable) override
     {
         m_Ctrl.EnableWindow(enable ? TRUE : FALSE);
         if (m_hCaption.IsAttached())
             m_hCaption.EnableWindow(enable ? TRUE : FALSE);
     }
 
-    virtual ControlDef* Find(HWND hCtrl)
+    virtual ControlDef* Find(HWND hCtrl) override
     {
         return (hCtrl == GetHWnd()) ? this : nullptr;
     }
@@ -283,6 +292,14 @@ public:
     virtual ControlDef* FindId(LPCWSTR id) override
     {
         return (m_sId == id) ? this : nullptr;
+    }
+
+    virtual void Save(std::map<std::wstring, std::wstring>& properties) override
+    {
+        if (!m_sId.empty())
+        {
+            properties[m_sId] = GetCommandValue();
+        }
     }
 
     virtual bool UseCommandLine() const
@@ -295,7 +312,7 @@ public:
         return std::wstring();
     }
 
-    virtual void GetCommandLine(std::wstring& cl) const
+    virtual void GetCommandLine(std::wstring& cl) const override
     {
         if (UseCommandLine())
         {
@@ -342,7 +359,7 @@ class ControlWithChildrenDef : public ControlDef
 public:
     using ControlDef::ControlDef;
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         ControlDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
         pxCaptionOffset = m_Children.GetLabelOffset(Dlg);
@@ -351,19 +368,19 @@ public:
 
     virtual RECT /*dlu*/ GetChildrenRect(rad::WindowProxy& Dlg, const RECT& dluRect) const = 0;
 
-    virtual void Show(bool show)
+    virtual void Show(bool show) override
     {
         ControlDef::Show(show);
         m_Children.Show(show);
     }
 
-    virtual void Enable(bool enable)
+    virtual void Enable(bool enable) override
     {
         ControlDef::Enable(enable);
         m_Children.Enable(enable);
     }
 
-    virtual ControlDef* Find(HWND hCtrl)
+    virtual ControlDef* Find(HWND hCtrl) override
     {
         ControlDef* cd = ControlDef::Find(hCtrl);
         if (cd == nullptr)
@@ -371,12 +388,19 @@ public:
         return cd;
     }
 
-    virtual ControlDef* FindId(LPCWSTR id)
+    virtual ControlDef* FindId(LPCWSTR id) override
     {
         ControlDef* cd = ControlDef::FindId(id);
         if (cd == nullptr)
             cd = m_Children.FindId(id);
         return cd;
+    }
+
+
+    virtual void Save(std::map<std::wstring, std::wstring>& properties) override
+    {
+        ControlDef::Save(properties);
+        m_Children.Save(properties);
     }
 
     virtual void GetCommandLine(std::wstring& cl) const
@@ -394,7 +418,7 @@ public:
     ButtonDef(int iIcon);
     ButtonDef(LPCTSTR sId, LPCTSTR sText);
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         ControlDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
         if (m_iIcon != 0)
@@ -421,7 +445,7 @@ class SelectDirDef : public ButtonDef
 public:
     SelectDirDef();
 
-    virtual BOOL OnCommand(WORD NotifyCode);
+    virtual BOOL OnCommand(WORD NotifyCode) override;
 
 private:
     static int CALLBACK BrowseCallbackProc(
@@ -437,7 +461,7 @@ class SelectFileDef : public ButtonDef
 public:
     SelectFileDef(LPCTSTR sFilter);
 
-    virtual BOOL OnCommand(WORD NotifyCode)
+    virtual BOOL OnCommand(WORD NotifyCode) override
     {
         switch (NotifyCode)
         {
@@ -474,10 +498,10 @@ class ComboBoxDef : public ControlDef
 public:
     ComboBoxDef(LPCTSTR sId, LPCTSTR sCaption);
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset);
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int w) const;
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int w) const override;
 
-    virtual BOOL OnCommand(WORD NotifyCode)
+    virtual BOOL OnCommand(WORD NotifyCode) override
     {
         switch (NotifyCode)
         {
@@ -488,12 +512,12 @@ public:
         return FALSE;
     }
 
-    virtual bool UseCommandLine() const
+    virtual bool UseCommandLine() const override
     {
         return ControlDef::UseCommandLine() || !GetCommandValue().empty();
     }
 
-    virtual std::wstring GetCommandValue() const;
+    virtual std::wstring GetCommandValue() const override;
 
     void SetWidth(int pxWidth) // TODO This should be in dlu
     {
@@ -521,13 +545,13 @@ class CheckBoxDef : public ControlWithChildrenDef
 public:
     CheckBoxDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         ControlWithChildrenDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
         SetCheck(m_bChecked);
     }
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE s = ControlWithChildrenDef::GetSize(Dlg, pxWidth);
         SIZE c = m_Children.GetSize(Dlg, pxWidth);
@@ -538,7 +562,7 @@ public:
         return s;
     }
 
-    virtual RECT GetChildrenRect(rad::WindowProxy& Dlg, const RECT& dluRect) const
+    virtual RECT GetChildrenRect(rad::WindowProxy& Dlg, const RECT& dluRect) const override
     {
         SIZE s = ControlWithChildrenDef::GetSize(Dlg, dluRect.right);
         RECT dluChildRect(dluRect);
@@ -551,7 +575,7 @@ public:
         return dluChildRect;
     }
 
-    virtual BOOL OnCommand(WORD NotifyCode)
+    virtual BOOL OnCommand(WORD NotifyCode) override
     {
         switch (NotifyCode)
         {
@@ -563,12 +587,12 @@ public:
         return FALSE;
     }
 
-    virtual bool UseCommandLine() const
+    virtual bool UseCommandLine() const override
     {
         return ControlWithChildrenDef::UseCommandLine() && GetCheck();
     }
 
-    virtual void GetCommandLine(std::wstring& cl) const
+    virtual void GetCommandLine(std::wstring& cl) const override
     {
         if (GetCheck())
             ControlWithChildrenDef::GetCommandLine(cl);
@@ -586,13 +610,13 @@ class RadioDef : public ControlWithChildrenDef
 public:
     RadioDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCommandLine);
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         ControlWithChildrenDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
         SetCheck(m_bChecked);
     }
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE s = ControlWithChildrenDef::GetSize(Dlg, pxWidth);
         SIZE c = m_Children.GetSize(Dlg, pxWidth);
@@ -603,7 +627,7 @@ public:
         return s;
     }
 
-    virtual RECT GetChildrenRect(rad::WindowProxy& Dlg, const RECT& dluRect) const
+    virtual RECT GetChildrenRect(rad::WindowProxy& Dlg, const RECT& dluRect) const override
     {
         SIZE s = ControlWithChildrenDef::GetSize(Dlg, dluRect.right);
         RECT dluChildRect(dluRect);
@@ -616,7 +640,7 @@ public:
         return dluChildRect;
     }
 
-    virtual BOOL OnCommand(WORD NotifyCode)
+    virtual BOOL OnCommand(WORD NotifyCode) override
     {
         switch (NotifyCode)
         {
@@ -628,14 +652,14 @@ public:
         return FALSE;
     }
 
-    virtual BOOL OnNotify(LPNMHDR ph);
+    virtual BOOL OnNotify(LPNMHDR ph) override;
 
-    virtual bool UseCommandLine() const
+    virtual bool UseCommandLine() const override
     {
         return ControlWithChildrenDef::UseCommandLine() && GetCheck();
     }
 
-    virtual void GetCommandLine(std::wstring& cl) const
+    virtual void GetCommandLine(std::wstring& cl) const override
     {
         if (GetCheck())
             ControlWithChildrenDef::GetCommandLine(cl);
@@ -654,13 +678,13 @@ class ImageDef : public ControlDef
 public:
     ImageDef(LPCTSTR sId, LPCTSTR sFileName);
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override
     {
         ControlDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
         m_Ctrl.SendMessage(STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) m_hBitmap);
     }
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int /*w*/) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int /*w*/) const override
     {
         if (m_hBitmap != NULL)
         {
@@ -686,7 +710,7 @@ class TextDef : public ControlDef
 public:
     TextDef(LPCTSTR sId, LPCTSTR sText);
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE dluSize = { 0, 8 };
         if (!m_sText.empty())
@@ -705,24 +729,24 @@ class TabDef : public ControlDef
 public:
     TabDef();
 
-    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset);
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const;
-    virtual BOOL OnNotify(LPNMHDR ph);
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override;
+    virtual BOOL OnNotify(LPNMHDR ph) override;
 
-    virtual void Show(bool show)
+    virtual void Show(bool show) override
     {
         ControlDef::Show(show);
         ShowPage(show);
     }
 
-    virtual void Enable(bool enable)
+    virtual void Enable(bool enable) override
     {
         ControlDef::Enable(enable);
         // TODO Enable pages ???
     }
 
-    virtual ControlDef* Find(HWND hCtrl);
-    virtual void GetCommandLine(std::wstring& cl) const;
+    virtual ControlDef* Find(HWND hCtrl) override;
+    virtual void GetCommandLine(std::wstring& cl) const override;
 
     VerticalLayout& AddPage(const std::wstring& name);
 
@@ -733,7 +757,7 @@ protected:
 private:
     class PageDialog : public rad::Dialog
     {
-        virtual BOOL OnMessage(UINT Message, WPARAM wParam, LPARAM lParam)
+        virtual BOOL OnMessage(UINT Message, WPARAM wParam, LPARAM lParam) override
         {
             switch (Message)
             {
@@ -765,9 +789,9 @@ private:
 class GroupDef : public ControlWithChildrenDef
 {
 public:
-    GroupDef(LPCTSTR sText);
+    GroupDef(LPCTSTR sId, LPCTSTR sText);
 
-    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const
+    virtual SIZE GetSize(rad::WindowProxy& Dlg, int pxWidth) const override
     {
         SIZE pxOffset = { 6, 0 };
         MapDialogSize(Dlg, &pxOffset);
@@ -787,7 +811,7 @@ public:
         return dluSize;
     }
 
-    virtual RECT GetChildrenRect(rad::WindowProxy& /*Dlg*/, const RECT& dluRect) const
+    virtual RECT GetChildrenRect(rad::WindowProxy& /*Dlg*/, const RECT& dluRect) const override
     {
         RECT dluChildRect(dluRect);
 
@@ -817,7 +841,7 @@ public:
         m_Ctrl.SetWindowText(sValue);
     }
 
-    virtual BOOL OnCommand(WORD NotifyCode)
+    virtual BOOL OnCommand(WORD NotifyCode) override
     {
         switch (NotifyCode)
         {
@@ -829,7 +853,7 @@ public:
         return FALSE;
     }
 
-    virtual bool UseCommandLine() const
+    virtual bool UseCommandLine() const override
     {
         return !m_bIgnore && m_Ctrl.GetWindowTextLength() > 0;
     }

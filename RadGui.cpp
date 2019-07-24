@@ -1,5 +1,6 @@
 #include <Rad\GUI\Dialog.h>
 #include <Rad\Rect.h>
+#include <Rad\Win\WinHandle.h>
 
 #include <CommCtrl.h>
 #include <Shlwapi.h>
@@ -25,13 +26,68 @@ using namespace rad;
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dn742486.aspx#sizingandspacing
 
+HKEY GetRegKey(LPCWSTR name, DWORD len)
+{
+    HKEY hKey = NULL;
+    HKEY hParentKey = NULL;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, L"Software\\RadSoft\\RadGui", 0, nullptr, 0, KEY_CREATE_SUB_KEY, nullptr, &hParentKey, nullptr) == ERROR_SUCCESS)
+    {
+        WCHAR subkey[1024];
+        wcsncpy_s(subkey, name, len);
+        subkey[len] = L'\0';
+
+        if (RegCreateKeyEx(hParentKey, subkey, 0, nullptr, 0, KEY_READ | KEY_SET_VALUE, nullptr, &hKey, nullptr) == ERROR_SUCCESS)
+        {
+            // do nothing
+        }
+
+        RegCloseKey(hParentKey);
+    }
+
+    return hKey;
+}
+
+void LoadRegistry(HKEY hKey, std::map<std::wstring, std::wstring>& properties)
+{
+    int i = 0;
+    while (true)
+    {
+        WCHAR valname[1024] = L"";
+        DWORD valnamelen = ARRAYSIZE(valname);
+        DWORD type;
+        BYTE data[1024] = {};
+        DWORD datalen = ARRAYSIZE(data);
+        LSTATUS status = RegEnumValue(hKey, i++, valname, &valnamelen, nullptr, &type, data, &datalen);
+        if (NTSTATUS(status))
+            break;
+
+        switch (type)
+        {
+        case REG_SZ:
+            properties[valname] = (LPCWSTR) data;
+            break;
+        };
+    }
+}
+
+void SaveRegistry(HKEY hKey, const std::map<std::wstring, std::wstring>& properties)
+{
+    for (auto i : properties)
+    {
+        LSTATUS status = RegSetValueEx(hKey, i.first.c_str(), 0, REG_SZ, (LPCBYTE) i.second.c_str(), (DWORD) i.second.length() * sizeof(wchar_t));
+        if (NTSTATUS(status))
+            status = status;
+    }
+}
+
 class RadGui : public Dialog
 {
 public:
-    RadGui(LPCTSTR sCaption, LPCTSTR sProgram, int pxWidth)
+    RadGui(LPCTSTR sCaption, LPCTSTR sProgram, int pxWidth, HKEY hKey)
         : m_pxWidth(pxWidth)
         , m_hEdit(nullptr, nullptr, nullptr, nullptr, false)
         , m_hExecute(nullptr, _T("E&xecute"))
+        , m_hKey(hKey)
     {
         if (sCaption)
             m_sCaption = sCaption;
@@ -109,6 +165,10 @@ protected:
     {
         if (hWnd == m_hExecute.GetHWnd())
         {
+            std::map<std::wstring, std::wstring> properties;
+            m_controls.Save(properties);
+            SaveRegistry(m_hKey, properties);
+
             const std::wstring cmdorig = m_hEdit.GetCommandValue();
 
             // TODO Set the console window icon
@@ -190,12 +250,24 @@ public:
 
     EditDef m_hEdit;
     ButtonDef m_hExecute;
+
+    HKEY m_hKey;
 };
 
-int CALLBACK WinMain(
+inline BOOL __stdcall CheckCloseReg(HKEY Handle)
+{
+    if (Handle != NULL)
+    {
+        if (!NTSTATUS(RegCloseKey(Handle)))
+            ThrowWinError(_T(__FUNCTION__));
+    }
+    return TRUE;
+}
+
+int CALLBACK _tWinMain(
     _In_ HINSTANCE hInstance,
     _In_ HINSTANCE /*hPrevInstance*/,
-    _In_ LPSTR     /*lpCmdLine*/,
+    _In_ LPTSTR     /*lpCmdLine*/,
     _In_ int       /*nCmdShow*/
 )
 {
@@ -204,6 +276,8 @@ int CALLBACK WinMain(
     INITCOMMONCONTROLSEX iccex = { sizeof(INITCOMMONCONTROLSEX) };
     iccex.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&iccex);
+
+    rad::WinHandle<HKEY> hKey(NULL, CheckCloseReg);
 
     try
     {
@@ -225,7 +299,13 @@ int CALLBACK WinMain(
                 properties[std::wstring(prop, eq)] = value;
             }
             else if (file == nullptr)
+            {
                 file = arg;
+                LPCWSTR name = PathFindFileName(file);
+                LPCWSTR ext = PathFindExtension(name);
+                hKey = rad::WinHandle<HKEY>(GetRegKey(name, (DWORD) (ext - name)), CheckCloseReg);
+                LoadRegistry(hKey.Get(), properties);
+            }
             else
                 throw std::exception("Too many paramters");
         }
@@ -263,7 +343,7 @@ int CALLBACK WinMain(
         // TODO Use PathQuoteSpaces on bstrProgram
         // TODO width is in DLU if bstrName is dialog
 
-        RadGui dlg(bstrCaption, bstrProgram, !bstrWidth ? 200 : _wtoi(bstrWidth));
+        RadGui dlg(bstrCaption, bstrProgram, !bstrWidth ? 200 : _wtoi(bstrWidth), hKey.Get());
         _tcscpy_s(dlg.m_sWrapper, sExeDir);
         PathAppend(dlg.m_sWrapper, _T("RadGuiRun.bat"));
         PathQuoteSpaces(dlg.m_sWrapper);

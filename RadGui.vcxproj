@@ -34,7 +34,7 @@
   <ItemDefinitionGroup>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies >kernel32.lib;user32.lib;gdi32.lib;shell32.lib;comctl32.lib;Comdlg32.lib;Shlwapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;shell32.lib;comctl32.lib;Comdlg32.lib;Shlwapi.lib;Advapi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

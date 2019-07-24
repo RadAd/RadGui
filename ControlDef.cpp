@@ -309,8 +309,8 @@ void TabDef::GetCommandLine(std::wstring& cl) const
         p.m_Children.GetCommandLine(cl);
 }
 
-GroupDef::GroupDef(LPCTSTR sText)
-    : ControlWithChildrenDef(WC_BUTTON, nullptr, sText, WS_TABSTOP | WS_VISIBLE | WS_GROUP | BS_GROUPBOX, 0, 0, 0)
+GroupDef::GroupDef(LPCTSTR sId, LPCTSTR sText)
+    : ControlWithChildrenDef(WC_BUTTON, sId, sText, WS_TABSTOP | WS_VISIBLE | WS_GROUP | BS_GROUPBOX, 0, 0, 0)
 {
 }
 
