@@ -74,9 +74,16 @@ void SaveRegistry(HKEY hKey, const std::map<std::wstring, std::wstring>& propert
 {
     for (auto i : properties)
     {
-        LSTATUS status = RegSetValueEx(hKey, i.first.c_str(), 0, REG_SZ, (LPCBYTE) i.second.c_str(), (DWORD) i.second.length() * sizeof(wchar_t));
-        if (NTSTATUS(status))
-            status = status;
+        if (i.second.empty())
+        {
+            LSTATUS status = RegDeleteValue(hKey, i.first.c_str());
+            assert(status == ERROR_FILE_NOT_FOUND || !NTSTATUS(status));
+        }
+        else
+        {
+            LSTATUS status = RegSetValueEx(hKey, i.first.c_str(), 0, REG_SZ, (LPCBYTE) i.second.c_str(), (DWORD) i.second.length() * sizeof(wchar_t));
+            assert(!NTSTATUS(status));
+        }
     }
 }
 
@@ -258,7 +265,7 @@ inline BOOL __stdcall CheckCloseReg(HKEY Handle)
 {
     if (Handle != NULL)
     {
-        if (!NTSTATUS(RegCloseKey(Handle)))
+        if (NTSTATUS(RegCloseKey(Handle)))
             ThrowWinError(_T(__FUNCTION__));
     }
     return TRUE;
@@ -367,9 +374,7 @@ int CALLBACK _tWinMain(
             ControlDef* cd = dlg.m_controls.FindId(it->first.c_str());
             if (cd != nullptr)
             {
-                EditDef* ed = dynamic_cast<EditDef*>(cd);
-                if (ed != nullptr)
-                    ed->SetValue(it->second.c_str());
+                cd->SetProperty(it->second.c_str());
             }
         }
 

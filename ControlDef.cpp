@@ -117,6 +117,7 @@ SIZE ComboBoxDef::GetSize(rad::WindowProxy& Dlg, int w) const
 
 std::wstring ComboBoxDef::GetCommandValue() const
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     int i = ComboBox_GetCurSel(m_Ctrl.GetHWND());
     if (i >= 0 && i < (int) m_items.size())
         return m_cl[i];
@@ -134,11 +135,13 @@ CheckBoxDef::CheckBoxDef(LPCTSTR sId, LPCTSTR sText, bool bChecked, LPCTSTR sCom
 
 void CheckBoxDef::SetCheck(bool bChecked)
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     Button_SetCheck(m_Ctrl.GetHWND(), bChecked ? BST_CHECKED : BST_UNCHECKED);
 }
 
 bool CheckBoxDef::GetCheck() const
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     return Button_GetCheck(m_Ctrl.GetHWND()) == BST_CHECKED;
 }
 
@@ -163,11 +166,13 @@ BOOL RadioDef::OnNotify(LPNMHDR ph)
 
 void RadioDef::SetCheck(bool bChecked)
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     Button_SetCheck(m_Ctrl.GetHWND(), bChecked ? BST_CHECKED : BST_UNCHECKED);
 }
 
 bool RadioDef::GetCheck() const
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     return Button_GetCheck(m_Ctrl.GetHWND()) == BST_CHECKED;
 }
 
@@ -273,6 +278,7 @@ VerticalLayout& TabDef::GetPage(int i)
 
 void TabDef::ShowPage(bool show)
 {
+    assert(m_Ctrl.GetHWND() != NULL);
     int i = TabCtrl_GetCurSel(m_Ctrl.GetHWND());
     m_Pages[i].m_Dlg->ShowWindow(show ? SW_SHOW : SW_HIDE);
 }

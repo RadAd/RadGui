@@ -231,6 +231,8 @@ public:
             m_sId = sId;
         if (sText)
             m_sText = sText;
+        if (m_sId.empty())
+            m_sId = m_sText;
     }
 
     virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
@@ -298,8 +300,18 @@ public:
     {
         if (!m_sId.empty())
         {
-            properties[m_sId] = GetCommandValue();
+            properties[m_sId] = GetProperty();
         }
+    }
+
+    virtual std::wstring GetProperty() const
+    {
+        return std::wstring();
+    }
+
+    virtual void SetProperty(LPCTSTR /*sValue*/)
+    {
+        assert(false);
     }
 
     virtual bool UseCommandLine() const
@@ -512,6 +524,23 @@ public:
         return FALSE;
     }
 
+    virtual std::wstring GetProperty() const override
+    {
+        return m_items[m_selected];
+    }
+
+    virtual void SetProperty(LPCTSTR sValue) override
+    {
+        for (int i = 0; i < m_items.size(); ++i)
+        {
+            if (m_items[i] == sValue)
+            {
+                m_selected = i;
+                break;
+            }
+        }
+    }
+
     virtual bool UseCommandLine() const override
     {
         return ControlDef::UseCommandLine() || !GetCommandValue().empty();
@@ -587,6 +616,16 @@ public:
         return FALSE;
     }
 
+    virtual std::wstring GetProperty() const override
+    {
+        return GetCheck() ? L"checked" : L"";
+    }
+
+    virtual void SetProperty(LPCTSTR sValue) override
+    {
+        m_bChecked = wcscmp(L"checked", sValue) == 0;
+    }
+
     virtual bool UseCommandLine() const override
     {
         return ControlWithChildrenDef::UseCommandLine() && GetCheck();
@@ -653,6 +692,16 @@ public:
     }
 
     virtual BOOL OnNotify(LPNMHDR ph) override;
+
+    virtual std::wstring GetProperty() const override
+    {
+        return GetCheck() ? L"selected" : L"unselected";
+    }
+
+    virtual void SetProperty(LPCTSTR sValue) override
+    {
+        m_bChecked = wcscmp(L"selected", sValue) == 0;
+    }
 
     virtual bool UseCommandLine() const override
     {
@@ -831,11 +880,6 @@ class EditDef : public ControlDef
 public:
     EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bQuote);
 
-    void SetValue(LPCTSTR sValue)
-    {
-        m_sText = sValue;
-    }
-
     void SetText(LPCTSTR sValue)
     {
         m_Ctrl.SetWindowText(sValue);
@@ -859,6 +903,13 @@ public:
     }
 
     virtual std::wstring GetCommandValue() const override;
+
+    virtual std::wstring GetProperty() const override { return GetCommandValue(); }
+
+    virtual void SetProperty(LPCTSTR sValue) override
+    {
+        m_sText = sValue;
+    }
 
     bool m_bQuote;
     bool m_bIgnore = false;
