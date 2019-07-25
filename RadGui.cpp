@@ -77,11 +77,13 @@ void SaveRegistry(HKEY hKey, const std::map<std::wstring, std::wstring>& propert
         if (i.second.empty())
         {
             LSTATUS status = RegDeleteValue(hKey, i.first.c_str());
+            status = status;
             assert(status == ERROR_FILE_NOT_FOUND || !NTSTATUS(status));
         }
         else
         {
             LSTATUS status = RegSetValueEx(hKey, i.first.c_str(), 0, REG_SZ, (LPCBYTE) i.second.c_str(), (DWORD) i.second.length() * sizeof(wchar_t));
+            status = status;
             assert(!NTSTATUS(status));
         }
     }

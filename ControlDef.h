@@ -340,9 +340,9 @@ public:
         return m_Ctrl.GetHWND();
     }
 
+protected:
     std::wstring m_CommandLine;
 
-protected:
     rad::WindowProxy GetCtrl() const
     {
         return m_Ctrl;
