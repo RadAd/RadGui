@@ -618,7 +618,7 @@ public:
 
     virtual std::wstring GetProperty() const override
     {
-        return GetCheck() ? L"checked" : L"";
+        return GetCheck() ? L"checked" : L"unchecked";
     }
 
     virtual void SetProperty(LPCTSTR sValue) override

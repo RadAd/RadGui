@@ -1,22 +1,22 @@
 <dialog caption="TF" program="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\TF.exe" width="403">
-	<groupbox caption="Action">
-		<radio caption="Get" commandline="get" selected="true">
-			<checkbox caption="Recursive" commandline="/recursive" selected="true"/>
-			<horzlayout>
-				<edit caption="Directory:" default="D:\AXG\RMS-R\Src"/>
-				<selectdir/>
-			</horzlayout>
-		</radio>
-		<radio caption="History" commandline="history">
-			<checkbox caption="Recursive" commandline="/recursive" selected="true"/>
-			<horzlayout>
-				<edit caption="Directory:" default="D:\AXG\RMS-R\Src"/>
-				<selectdir/>
-			</horzlayout>
-			<edit caption="User:" commandline="/user:"/>
-		</radio>
-		<radio caption="Changeset" commandline="changeset">
-			<edit caption="Number:"/>
-		</radio>
-	</groupbox>
+  <groupbox caption="Action">
+    <radio caption="Get" commandline="get" selected="true">
+      <checkbox id="recursiveget" caption="Recursive" commandline="/recursive" selected="true"/>
+      <horzlayout>
+        <edit id="directoryget" caption="Directory:" quote="true"/>
+        <selectdir/>
+      </horzlayout>
+    </radio>
+    <radio caption="History" commandline="history">
+      <checkbox id="recursivehist" caption="Recursive" commandline="/recursive" selected="true"/>
+      <horzlayout>
+        <edit id="directoryhist" caption="Directory:" quote="true"/>
+        <selectdir/>
+      </horzlayout>
+      <edit id="user" caption="User:" commandline="/user:" quote="true"/>
+    </radio>
+    <radio caption="Changeset" commandline="changeset">
+      <edit id="number" caption="Number:"/>
+    </radio>
+  </groupbox>
 </dialog>
