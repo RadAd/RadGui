@@ -556,7 +556,7 @@ public:
     void AddItem(LPTSTR sName, LPTSTR sCommandLine, bool selected)
     {
         if (selected)
-            m_selected = (int) m_items.size();
+            m_selected = m_items.size();
         m_items.push_back(sName);
         m_cl.push_back(sCommandLine ? sCommandLine : _T(""));
     }
@@ -566,7 +566,7 @@ private:
 
     std::vector<std::wstring> m_items;
     std::vector<std::wstring> m_cl;
-    int m_selected = 0;
+    size_t m_selected = 0;
 };
 
 class CheckBoxDef : public ControlWithChildrenDef
