@@ -531,7 +531,7 @@ public:
 
     virtual void SetProperty(LPCTSTR sValue) override
     {
-        for (int i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i] == sValue)
             {
@@ -828,7 +828,7 @@ private:
         }
 
         std::wstring m_sName;
-        PageDialog* m_Dlg;
+        PageDialog* m_Dlg = nullptr;
         VerticalLayout m_Children;
     };
 

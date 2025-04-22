@@ -275,7 +275,7 @@ inline BOOL __stdcall CheckCloseReg(HKEY Handle)
 
 int CALLBACK _tWinMain(
     _In_ HINSTANCE hInstance,
-    _In_ HINSTANCE /*hPrevInstance*/,
+    _In_opt_ HINSTANCE /*hPrevInstance*/,
     _In_ LPTSTR     /*lpCmdLine*/,
     _In_ int       /*nCmdShow*/
 )
@@ -304,6 +304,8 @@ int CALLBACK _tWinMain(
             {
                 LPCWSTR prop = arg + 3;
                 LPCWSTR eq = wcschr(prop, L'=');
+                if (eq == nullptr)
+                    throw std::exception("Expected '=' in /p:<name>=<value>");
                 LPCWSTR value = eq + 1;
                 properties[std::wstring(prop, eq)] = value;
             }
