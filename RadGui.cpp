@@ -184,7 +184,7 @@ protected:
             //cmd = _T("cmd /C ") + cmd + _T(" & pause");
             //cmd = _T("cmd /V:ON /C \"") + cmd + _T("\" & echo ExitCode: !ERRORLEVEL! & pause");
             //cmd = _T("\"C:\\Windows\\sysnative\\cmd.exe\" /V:ON /C \"") + cmd + _T("\" & echo ExitCode: !ERRORLEVEL! & pause");
-            std::wstring cmd = m_sWrapper + std::wstring(_T(" ")) + cmdorig;
+            std::wstring cmd = m_sWrapper[0] == '\0' ? cmdorig : m_sWrapper + std::wstring(_T(" ")) + cmdorig;
 
             STARTUPINFO si = { sizeof(STARTUPINFO) };
             //si.lpTitle = const_cast<LPTSTR>(cmdorig.c_str());
@@ -347,18 +347,22 @@ int CALLBACK _tWinMain(
         _bstr_t bstrCaption = GetAttribute(pXMLRoot, _T("caption"));
         _bstr_t bstrWidth = GetAttribute(pXMLRoot, _T("width"));
         _bstr_t bstrProgram = GetAttribute(pXMLRoot, _T("program"));
+        _bstr_t bstrWrapper = GetAttribute(pXMLRoot, _T("wrapper"));
 
         // TODO Support icon
         // TODO Add help page
         // TODO Add path of bstrProgram to PATH so we can just use the filename in the text
-        // TODO Use PathQuoteSpaces on bstrProgram
         // TODO width is in DLU if bstrName is dialog
 
         RadGui dlg(bstrCaption, bstrProgram, !bstrWidth ? 200 : _wtoi(bstrWidth), hKey.Get());
-        _tcscpy_s(dlg.m_sWrapper, sExeDir);
-        PathAppend(dlg.m_sWrapper, _T("RadGuiRun.bat"));
-        PathQuoteSpaces(dlg.m_sWrapper);
-        // TODO Get wrapper from xml file
+        if (!bstrWrapper)
+        {
+            _tcscpy_s(dlg.m_sWrapper, sExeDir);
+            PathAppend(dlg.m_sWrapper, _T("RadGuiRun.bat"));
+            PathQuoteSpaces(dlg.m_sWrapper);
+        }
+        else
+            _tcscpy_s(dlg.m_sWrapper, bstrWrapper);
 
         TCHAR sDir[MAX_PATH];
         _tcscpy_s(sDir, file);
