@@ -320,14 +320,55 @@ GroupDef::GroupDef(LPCTSTR sId, LPCTSTR sText)
 {
 }
 
-EditDef::EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bQuote)
-    : ControlDef(WC_EDIT, sId, sValue, WS_TABSTOP | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 0, 0, 14)
+EditDef::EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bAcceptFiles, bool bQuote)
+    : ControlDef(WC_EDIT, sId, sValue, WS_TABSTOP | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, (bAcceptFiles ? WS_EX_ACCEPTFILES : 0), 0, 14)
     , m_bQuote(bQuote)
 {
     if (sCaption != nullptr)
         m_sCaption = sCaption;
     if (sCommandLine)
         m_CommandLine = sCommandLine;
+}
+
+LRESULT EditSubclassProc(
+    HWND hWnd,
+    UINT uMsg,
+    WPARAM wParam,
+    LPARAM lParam,
+    UINT_PTR /*uIdSubclass*/,
+    DWORD_PTR /*dwRefData*/
+)
+{
+    if (uMsg == WM_DROPFILES)
+    {
+        WCHAR text[MAX_PATH*10] = TEXT("");
+        if (GetKeyState(VK_CONTROL) & 0x8000)
+            GetWindowText(hWnd, text, ARRAYSIZE(text));
+        HDROP hDrop = (HDROP) wParam;
+        UINT count = DragQueryFile(hDrop, UINT(-1), NULL, 0);
+        for (UINT i = 0; i < count; ++i)
+        {
+            WCHAR filename[MAX_PATH];
+            if (DragQueryFile(hDrop, i, filename, MAX_PATH))
+            {
+                if (text[0] != '\0')
+                    _tcscat_s(text, TEXT(";"));
+                _tcscat_s(text, filename);
+            }
+        }
+        DragFinish(hDrop);
+        SetWindowText(hWnd, text);
+    }
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+
+void EditDef::CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+{
+    ControlDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
+    //if ((m_Ctrl.GetExStyle() & WS_EX_ACCEPTFILES) != 0)
+    {
+        SetWindowSubclass(m_Ctrl.GetHWND(), EditSubclassProc, 123, 0);
+    }
 }
 
 std::wstring EditDef::GetCommandValue() const

@@ -878,12 +878,14 @@ public:
 class EditDef : public ControlDef
 {
 public:
-    EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bQuote);
+    EditDef(LPCTSTR sId, LPCTSTR sCaption, LPCTSTR sValue, LPCTSTR sCommandLine, bool bAcceptFiles, bool bQuote);
 
     void SetText(LPCTSTR sValue)
     {
         m_Ctrl.SetWindowText(sValue);
     }
+
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
 
     virtual BOOL OnCommand(WORD NotifyCode) override
     {

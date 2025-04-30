@@ -94,7 +94,7 @@ class RadGui : public Dialog
 public:
     RadGui(LPCTSTR sCaption, LPCTSTR sProgram, int pxWidth, HKEY hKey)
         : m_pxWidth(pxWidth)
-        , m_hEdit(nullptr, nullptr, nullptr, nullptr, false)
+        , m_hEdit(nullptr, nullptr, nullptr, nullptr, false, false)
         , m_hExecute(nullptr, _T("E&xecute"))
         , m_hKey(hKey)
     {
