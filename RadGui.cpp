@@ -92,7 +92,7 @@ void SaveRegistry(HKEY hKey, const std::map<std::wstring, std::wstring>& propert
 class RadGui : public Dialog
 {
 public:
-    RadGui(LPCTSTR sCaption, LPCTSTR sProgram, int pxWidth, HKEY hKey)
+    RadGui(LPCTSTR sCaption, LPCTSTR sProgram, LPCTSTR sIcon, int pxWidth, HKEY hKey)
         : m_pxWidth(pxWidth)
         , m_hEdit(nullptr, nullptr, nullptr, nullptr, false, false)
         , m_hExecute(nullptr, _T("E&xecute"))
@@ -104,6 +104,8 @@ public:
             _tcscpy_s(m_sProgram, sProgram);
         if (m_sProgram[0] != _T('\"'))
             PathQuoteSpaces(m_sProgram);
+        if (sIcon)
+            _tcscpy_s(m_sIcon, sIcon);
         m_hEdit.m_bIgnore = true;
         m_hExecute.MakeDefault();
     }
@@ -119,7 +121,10 @@ protected:
         // TODO Use PathFindOnPath
         TCHAR sIcon[MAX_PATH];
         //_tcscpy_s(sIcon, m_sProgram);
-        ExpandEnvironmentStrings(m_sProgram, sIcon, MAX_PATH);
+        if (m_sIcon[0] != '\0')
+            ExpandEnvironmentStrings(m_sIcon, sIcon, MAX_PATH);
+        else
+            ExpandEnvironmentStrings(m_sProgram, sIcon, MAX_PATH);
         PathUnquoteSpaces(sIcon);
         WORD iIndex = 0;
         HICON hAppIcon = ExtractAssociatedIcon(hInstance, sIcon, &iIndex);
@@ -257,6 +262,7 @@ public:
     std::wstring m_sCaption;
     TCHAR m_sWrapper[MAX_PATH] = _T("");
     TCHAR m_sProgram[MAX_PATH] = _T("");
+    TCHAR m_sIcon[MAX_PATH] = _T("");
     int m_pxWidth;
 
     EditDef m_hEdit;
@@ -349,6 +355,7 @@ int CALLBACK _tWinMain(
         _bstr_t bstrCaption = GetAttribute(pXMLRoot, _T("caption"));
         _bstr_t bstrWidth = GetAttribute(pXMLRoot, _T("width"));
         _bstr_t bstrProgram = GetAttribute(pXMLRoot, _T("program"));
+        _bstr_t bstrIcon = GetAttribute(pXMLRoot, _T("icon"));
         _bstr_t bstrWrapper = GetAttribute(pXMLRoot, _T("wrapper"));
 
         // TODO Support icon
@@ -356,7 +363,7 @@ int CALLBACK _tWinMain(
         // TODO Add path of bstrProgram to PATH so we can just use the filename in the text
         // TODO width is in DLU if bstrName is dialog
 
-        RadGui dlg(bstrCaption, bstrProgram, !bstrWidth ? 200 : _wtoi(bstrWidth), hKey.Get());
+        RadGui dlg(bstrCaption, bstrProgram, bstrIcon, !bstrWidth ? 200 : _wtoi(bstrWidth), hKey.Get());
         if (!bstrWrapper)
         {
             _tcscpy_s(dlg.m_sWrapper, sExeDir);
