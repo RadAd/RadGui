@@ -115,9 +115,11 @@ protected:
             SetWindowText(m_sCaption.c_str());
 
         HINSTANCE hInstance = (HINSTANCE) GetWindowLongPtr(GWLP_HINSTANCE);
+        assert(hInstance != NULL);
         // TODO Use PathFindOnPath
         TCHAR sIcon[MAX_PATH];
-        _tcscpy_s(sIcon, m_sProgram);
+        //_tcscpy_s(sIcon, m_sProgram);
+        ExpandEnvironmentStrings(m_sProgram, sIcon, MAX_PATH);
         PathUnquoteSpaces(sIcon);
         WORD iIndex = 0;
         HICON hAppIcon = ExtractAssociatedIcon(hInstance, sIcon, &iIndex);
