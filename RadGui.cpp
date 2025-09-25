@@ -294,6 +294,8 @@ int CALLBACK _tWinMain(
     iccex.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&iccex);
 
+    SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
     rad::WinHandle<HKEY> hKey(NULL, CheckCloseReg);
 
     try
