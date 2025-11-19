@@ -916,3 +916,45 @@ public:
     bool m_bQuote;
     bool m_bIgnore = false;
 };
+
+class ListBoxDef : public ControlDef
+{
+public:
+    ListBoxDef(LPCTSTR sId, LPCTSTR sCommandLine, bool bMultiSelect, TCHAR cSeparator, int dluWidth, int dluHeight);
+
+    void LoadDir(LPCTSTR sPath)
+    {
+        m_sLoadDir = sPath;
+    }
+
+    virtual void CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset) override;
+
+    virtual BOOL OnCommand(WORD NotifyCode) override
+    {
+        switch (NotifyCode)
+        {
+        case LBN_SELCHANGE:
+            GetFrame().SendMessage(WM_UPDATE_CMD);
+            break;
+        }
+        return FALSE;
+    }
+
+    virtual std::wstring GetProperty() const override
+    {
+        return GetCommandValue();
+    }
+
+    virtual void SetProperty(LPCTSTR sValue) override
+    {
+        m_sInit = sValue;
+    }
+
+    virtual bool UseCommandLine() const override;
+    virtual std::wstring GetCommandValue() const override;
+
+private:
+    TCHAR m_sSep;
+    std::wstring m_sLoadDir;
+    std::wstring m_sInit;
+};

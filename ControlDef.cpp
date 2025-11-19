@@ -440,3 +440,95 @@ SelectFileDef::SelectFileDef(LPCTSTR sFilter)
         m_sFilter += L'\0';
     }
 }
+
+ListBoxDef::ListBoxDef(LPCTSTR sId, LPCTSTR sCommandLine, bool bMultiSelect, TCHAR cSeparator, int dluWidth, int dluHeight)
+    : ControlDef(WC_LISTBOX, sId, nullptr, WS_TABSTOP | WS_VISIBLE | WS_BORDER | LBS_NOTIFY | (bMultiSelect ? LBS_MULTIPLESEL : 0), 0, dluWidth, dluHeight)
+    , m_sSep(cSeparator)
+{
+    if (sCommandLine)
+        m_CommandLine = sCommandLine;
+}
+
+void ListBoxDef::CreateChild(rad::WindowProxy& Dlg, const RECT& dluRect, int pxCaptionOffset)
+{
+    ControlDef::CreateChild(Dlg, dluRect, pxCaptionOffset);
+    if (!m_sLoadDir.empty())
+        ListBox_Dir(m_Ctrl.GetHWND(), 0, m_sLoadDir.c_str());
+    if (!m_sInit.empty())
+    {
+        if (GetWindowStyle(m_Ctrl.GetHWND()) & LBS_MULTIPLESEL)
+        {
+            size_t start = 0;
+            while (true)
+            {
+                size_t end = m_sInit.find(m_sSep, start);
+                std::wstring sItem;
+                if (end == std::wstring::npos)
+                    sItem = m_sInit.substr(start);
+                else
+                    sItem = m_sInit.substr(start, end - start);
+
+                const int item = ListBox_FindString(m_Ctrl.GetHWND(), -1, sItem.c_str());
+                if (item >= 0)
+                    ListBox_SetSel(m_Ctrl.GetHWND(), TRUE, item);
+                if (end == std::wstring::npos)
+                    break;
+                start = end + 1;
+            }
+        }
+        else
+        {
+            const int item = ListBox_FindString(m_Ctrl.GetHWND(), -1, m_sInit.c_str());
+            if (item >= 0)
+                ListBox_SetCurSel(m_Ctrl.GetHWND(), item);
+        }
+    }
+}
+
+bool ListBoxDef::UseCommandLine() const
+{
+    if (!ControlDef::UseCommandLine())
+        return false;
+
+    if (GetWindowStyle(m_Ctrl.GetHWND()) & LBS_MULTIPLESEL)
+    {
+        const int count = ListBox_GetSelCount(m_Ctrl.GetHWND());
+        return count > 0;
+    }
+    else
+    {
+        const int item = ListBox_GetCurSel(m_Ctrl.GetHWND());
+        return item >= 0;
+    }
+}
+
+std::wstring ListBoxDef::GetCommandValue() const
+{
+    if (GetWindowStyle(m_Ctrl.GetHWND()) & LBS_MULTIPLESEL)
+    {
+        std::wstring result;
+        const int count = ListBox_GetSelCount(m_Ctrl.GetHWND());
+        std::vector<int> indices(count);
+        ListBox_GetSelItems(m_Ctrl.GetHWND(), count, indices.data());
+        for (const int item : indices)
+        {
+            TCHAR text[MAX_PATH] = _T("");
+            ListBox_GetText(m_Ctrl.GetHWND(), item, text);
+            if (text[0] != '\0')
+            {
+                if (!result.empty())
+                    result += m_sSep;
+                result += text;
+            }
+        }
+        return result;
+    }
+    else
+    {
+        const int item = ListBox_GetCurSel(m_Ctrl.GetHWND());
+        TCHAR text[MAX_PATH] = _T("");
+        if (item >= 0)
+            ListBox_GetText(m_Ctrl.GetHWND(), item, text);
+        return text;
+    }
+}

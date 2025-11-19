@@ -182,7 +182,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
                 _bstr_t bstrAcceptFiles = GetAttribute(pXMLChildNode, _T("acceptfiles"));
                 _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
-                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrAcceptFiles == _T("true"), bstrQuote == _T("true")));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrAcceptFiles == L"true", bstrQuote == L"true"));
             }
             else if (bstrType == L"checkbox")
             {
@@ -230,7 +230,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
                 _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
-                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, true, bstrQuote == _T("true")));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, true, bstrQuote == L"true"));
                 hs->Add(new SelectDirDef());
                 controls.Add(hs.release());
             }
@@ -242,7 +242,7 @@ void ProcessFormControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNode
                 _bstr_t bstrDefault = GetAttribute(pXMLChildNode, _T("default"));
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
                 _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
-                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, true, bstrQuote == _T("true")));
+                hs->Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, true, bstrQuote == L"true"));
                 _bstr_t bstrFilter = GetAttribute(pXMLChildNode, _T("filter"));
                 controls.Add(new SelectFileDef(bstrFilter));
                 controls.Add(hs.release());
@@ -302,7 +302,7 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
                 _bstr_t bstrAcceptFiles = GetAttribute(pXMLChildNode, _T("acceptfiles"));
                 _bstr_t bstrQuote = GetAttribute(pXMLChildNode, _T("quote"));
-                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrAcceptFiles == _T("true"), bstrQuote == _T("true")));
+                controls.Add(new EditDef(bstrId, bstrCaption, bstrDefault, bstrCommandLine, bstrAcceptFiles == L"true", bstrQuote == L"true"));
             }
             else if (bstrName == L"selectfile")
             {
@@ -324,6 +324,22 @@ void ProcessDialogControls(ChildrenLayout& controls, MSXML2::IXMLDOMNode* pXMLNo
                 std::unique_ptr<VerticalLayout> hs(new VerticalLayout());
                 ProcessDialogControls(*hs.get(), pXMLChildNode, sDir);
                 controls.Add(hs.release());
+            }
+            else if (bstrName == L"listbox")
+            {
+                _bstr_t bstrCommandLine = GetAttribute(pXMLChildNode, _T("commandline"));
+                _bstr_t bstrDir = GetAttribute(pXMLChildNode, _T("dir"));
+                _bstr_t bstrMultiSelect = GetAttribute(pXMLChildNode, _T("multiselect"));
+                _bstr_t bstrSep = GetAttribute(pXMLChildNode, _T("sep"));
+                _bstr_t bstrWidth = GetAttribute(pXMLChildNode, _T("width"));
+                _bstr_t bstrHeight = GetAttribute(pXMLChildNode, _T("height"));
+                const int iWidth = !!bstrWidth ? _wtoi(bstrWidth) : -1;
+                const int iHeight = !!bstrHeight ? _wtoi(bstrHeight) : 100;
+                const TCHAR cSep = !!bstrSep ? bstrSep.GetBSTR()[0] : L';';
+                ListBoxDef* lbd = new ListBoxDef(bstrId, bstrCommandLine, bstrMultiSelect == L"true", cSep, iWidth, iHeight);
+                if (!!bstrDir)
+                    lbd->LoadDir(bstrDir);
+                controls.Add(lbd);
             }
             else
                 // TODO Unknown node bstrName
